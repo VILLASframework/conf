@@ -2,9 +2,8 @@ version: "3.7"
 
 services:
   node-red:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: nodered/node-red:latest
+    entrypoint: /entrypoint.sh
     hostname: "nodered"
     environment:
       - TZ=Europe/Berlin
@@ -12,4 +11,5 @@ services:
       - 1880:1880
     volumes:
       - ../../containerData:/data
-      - ../../villas-conf-node:/villas-conf-node  
+      - ../../villas-conf-node:/villas-conf-node
+      - ./entrypoint.sh:/entrypoint.sh
