@@ -37,5 +37,11 @@ docker compose build --no-cache
 
 ## Usage
 
+###Run VILLASnode
+
+```
+docker run --volume ./example_conf/example.json:/config.json --privileged registry.git.rwth-aachen.de/acs/public/villas/node node /config.json
+```
+
 
 ## License

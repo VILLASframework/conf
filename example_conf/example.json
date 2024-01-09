@@ -1,0 +1,49 @@
+{
+  "nodes": {
+    "siggen": {
+      "type": "signal.v2",
+      "rate": 10.0,
+      "realtime": true,
+      "in": {
+        "signals": [
+          {
+            "name": "channel1",
+            "signal": "sine",
+            "amplitude": 10,
+            "frequency": 1,
+            "offset": 0.0
+          },
+          {
+            "name": "channel2",
+            "signal": "sine",
+            "amplitude": 10,
+            "frequency": 1,
+            "offset": 0.0
+          }
+        ]
+      }
+    }
+  },
+  "paths": [
+    {
+      "in": "siggen",
+      "hooks": [
+        {
+          "type": "round",
+          "signals": [
+            "channel1"
+          ],
+          "precision": 1,
+          "enabled": true
+        },
+        {
+          "type": "print",
+          "signals": [
+            "channel1",
+            "channel2"
+          ]
+        }
+      ]
+    }
+  ]
+}
