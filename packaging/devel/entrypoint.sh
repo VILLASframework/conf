@@ -1,5 +1,7 @@
 #!/bin/sh
 
+npm i /villas-conf-node
+
 npm i nodemon
 
 # sleep infinity
@@ -12,4 +14,3 @@ npm i nodemon
 # npm i /villas-conf-node
 
 # fg $ID
-
