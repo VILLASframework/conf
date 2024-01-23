@@ -3,6 +3,7 @@ version: "3.7"
 services:
   node-red:
     image: nodered/node-red:latest
+    entrypoint: /entrypoint.sh
     hostname: "nodered"
     environment:
       - TZ=Europe/Berlin
@@ -11,3 +12,4 @@ services:
     volumes:
       - ../../containerData:/data
       - ../../villas-conf-node:/villas-conf-node
+      - ./entrypoint.sh:/entrypoint.sh
