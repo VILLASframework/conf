@@ -8,10 +8,13 @@
   },
   "author": "Manuel Pitz",
   "license": "Apache-2.0",
-  "node-red" : {
+  "node-red": {
     "nodes": {
-        "signal": "nodes/signal.js",
-        "rms" : "hooks/rms.js"
+      "config-start": "nodes/config-start.js",
+      "config-end": "nodes/config-end.js",
+      "signal": "nodes/signal.js",
+      "remote-server": "nodes/remote-server.js",
+      "rms": "hooks/rms.js"
     }
-}
+  }
 }
