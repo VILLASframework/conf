@@ -3,9 +3,15 @@ module.exports = function (RED) {
     RED.nodes.createNode(this, config);
     var node = this;
     node.on("input", function (msg) {
-      msg.payload = msg.payload.toLowerCase();
-
+      var { nodes, paths } = msg.payload;
+      nodes[this.name] = {
+        name: this.name,
+        type: "square",
+      };
       node.send(msg);
+    });
+    node.on("editprepare", function (msg) {
+      alert("test");
     });
   }
   RED.nodes.registerType("signal", SignalNode);
