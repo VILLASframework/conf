@@ -3,7 +3,6 @@ module.exports = function (RED) {
     RED.nodes.createNode(this, config);
     var node = this;
     node.on("input", function (msg, send, done) {
-      console.log(msg);
       node.send(msg);
     });
   }
@@ -15,7 +14,6 @@ module.exports = function (RED) {
       var node = RED.nodes.getNode(req.params.id);
       if (node != null) {
         try {
-          console.log(node);
           if (req.body) {
             node.receive(req.body);
           } else {
