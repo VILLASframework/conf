@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=http://json-schema.org/draft-07/schema
+# SPDX-FileCopyrightText: 2014-2023 Institute for Automation of Complex Power Systems, RWTH Aachen University
+# SPDX-License-Identifier: Apache-2.0
+---
+get:
+  operationId: get-graph
+
+  summary: Get a graph representation of the currently loaded configuration.
+
+  tags:
+    - super-node
+
+  parameters:
+  - in: path
+    name: format
+    schema:
+      type: string
+      description: The image format of the generated graph.
+      enum:
+      - ps
+      - eps
+      - txt
+      - svg
+      - svgz
+      - gif
+      - png
+      - jpg
+      - jpeg
+      - bmp
+      - dot
+      - fig
+      - json
+      - pdf
+
+  - in: query
+    name: layout
+    schema:
+      type: string
+      description: The Graphviz layout engine used for rendering the graph.
+      enum:
+        - circo
+        - dot
+        - fdp
+        - neato
+        - nop
+        - nop1
+        - nop2
+        - osage
+        - patchwork
+        - sfdp
+        - twopi
+
+  responses:
+    '200':
+      description: Success
+    '400':
+      description: Failure

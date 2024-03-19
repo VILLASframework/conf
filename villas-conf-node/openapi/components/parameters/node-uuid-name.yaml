@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2014-2023 Institute for Automation of Complex Power Systems, RWTH Aachen University
+# SPDX-License-Identifier: Apache-2.0
+---
+name: uuid-or-name
+description: Either a UUID or node-name
+in: path
+required: true
+schema:
+  oneOf:
+    - type: string
+      format: uuid
+    - type: string
+      pattern: '[a-z0-9_-]{2,32}'

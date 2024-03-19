@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=http://json-schema.org/draft-07/schema
+# SPDX-FileCopyrightText: 2014-2023 Institute for Automation of Complex Power Systems, RWTH Aachen University
+# SPDX-License-Identifier: Apache-2.0
+---
+post:
+  operationId: rewind-file-node
+
+  summary: Rewind the playback file to the beginning.
+  tags:
+    - nodes
+  parameters:
+    - $ref: ../../components/parameters/node-uuid-name.yaml
+  responses:
+    '200':
+      description: Success. The file has been rewound.
+    '404':
+      description: Error. There is no node with the given UUID.

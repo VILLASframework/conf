@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=http://json-schema.org/draft-07/schema
+# SPDX-FileCopyrightText: 2014-2023 Institute for Automation of Complex Power Systems, RWTH Aachen University
+# SPDX-License-Identifier: Apache-2.0
+---
+post:
+  operationId: shutdown
+  summary: Shutdown the VILLASnode instance.
+  tags:
+    - super-node
+  responses:
+    '200':
+      description: Success. The instance has been shut down.
+
+    '400':
+      description: Failure
