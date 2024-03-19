@@ -1,0 +1,44 @@
+<script type="text/javascript">
+  RED.nodes.registerType("round", {
+    category: "function",
+    color: "#ff0000",
+    defaults: {
+      hooktype: { value: "round", required: true },
+      precision: { value: 1 },
+      server: { value: "", type: "remote-server" },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "file.svg",
+    label: function () {
+      return "round";
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="round">
+  <div class="form-row">
+    <label for="node-input-hooktype"><i class="fa fa-tag"></i> Type</label>
+    <input
+      type="text"
+      id="node-input-hooktyp"
+      placeholder="Type"
+      value="round"
+      readonly
+    />
+  </div>
+  <div class="form-row">
+    <label for="node-input-server"><i class="fa fa-tag"></i> Server</label>
+    <input type="text" id="node-input-server" placeholder="Server" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-precision"
+      ><i class="fa fa-tag"></i> Precision</label
+    >
+    <input type="number" id="node-input-precision" placeholder="1" />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="round">
+  <p>A simple hook to test hook behaviour</p>
+</script>

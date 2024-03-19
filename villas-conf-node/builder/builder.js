@@ -1,3 +1,34 @@
+/**
+ * @readonly
+ * @enum {string}
+ * See villas docs
+ */
+const PathMode = {
+  ANY: "any",
+  ALL: "all",
+};
+
+/**
+ * @typedef {Object} Path
+ * @property {string} in
+ * @property {string} out
+ * @property {boolean} enabled
+ * @property {boolean} reverse
+ * @property {PathMode} mode
+ * @property {string[]} mask
+ * @property {number} rate - `>= 0`
+ * @property {boolean} original_sequence_no
+ * @property {any} hooks
+ * @property {uuid} uuid
+ * @property {any} affinity
+ * @property {boolean} poll
+ * @property {boolean} builtin
+ * @property {number} queuelen
+ */
+
+/**
+ * Configuration Builder to iteratively build and validate villas configurations to and from json
+ */
 class ConfBuilder {
   constructor(jsonMsg) {
     this.config = {
@@ -36,6 +67,20 @@ class ConfBuilder {
     //validate(config)
 
     this.config.nodes[name] = config;
+  }
+
+  /**
+   * Add a path to the configuration
+   *
+   * @param {Path} config - Path configuration
+   */
+  addPath(config) {
+    //TODO: validate Path
+    //TODO validate In/Out nodes
+  }
+
+  addHook(config) {
+    //get the path to add the hook to.
   }
 
   /**

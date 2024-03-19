@@ -14,7 +14,11 @@
       "config-end": "nodes/config-end.js",
       "signal": "nodes/signal.js",
       "remote-server": "nodes/remote-server.js",
-      "rms": "hooks/rms.js"
+      "rms": "hooks/rms.js",
+      "round": "hooks/round.js"
     }
+  },
+  "dependencies": {
+    "@readme/openapi-parser": "^2.5.0"
   }
 }
