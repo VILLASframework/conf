@@ -1,27 +1,59 @@
-const { ConfBuilder } = require("../builder/builder");
-
 module.exports = function (RED) {
   function SignalNode(config) {
     RED.nodes.createNode(this, config);
     var node = this;
+
+    /**
+     * @type {import("../builder/builder").ConfBuilder}
+     */
+    const builder = this.context().flow.get("builder");
+
+    /**
+     * @type {}
+     */
     node.on("input", function (msg) {
-      const builder = new ConfBuilder(msg.payload);
-      builder.print();
+      // wires
+      const wires = this.wires.flat();
+      let parsedConfig = {
+        ...config,
+      };
 
-      console.log(config);
+      //parse arrays
+      for (const propName in config) {
+        if (/^.+Encoded$/.test(propName)) {
+          const parsedPropName = propName.slice(
+            0,
+            propName.length - "Encoded".length,
+          );
+          console.log("Parsing", propName, " INTO ", parsedPropName);
+          const parsed = JSON.parse(config[propName]);
+          console.log("PARSED ", parsed);
+          if (parsed.type === "INPUT") {
+            parsedConfig[parsedPropName] = parsed.values;
+          } else {
+            const filtered = parsed.values.filter((x) => x !== "_ADD_");
+            parsedConfig[parsedPropName] = filtered.map((item) => {
+              return RED.nodes.getNode(item);
+            });
 
-      builder.addNode(this.name, {
-        type: config.nodetype,
+            delete parsedConfig[`${parsedPropName}Template`];
+          }
+        }
+      }
+
+      console.log("OUTPUT: ", {
+        ...parsedConfig,
+
+        id: this.id,
+        wires: wires,
       });
 
-      builder.print();
-
-      msg.payload = builder.config;
+      msg.payload.origin = this.nodetype;
+      msg.payload.originId = this.id;
+      msg.payload.trace.push(this.id);
       node.send(msg);
     });
-    node.on("editprepare", function (msg) {
-      alert("test");
-    });
   }
+
   RED.nodes.registerType("signal", SignalNode);
 };

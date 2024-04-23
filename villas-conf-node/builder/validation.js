@@ -1,4 +1,41 @@
 /**
+ *
+ * @class UndefinedHookPathError
+ * @constructor
+ * @classdesc The error occurs when a hook has multiple outputs. This results in undefined behaviour.
+ * @extends Error
+ */
+class UndefinedHookPathError extends Error {
+  /**
+   * @param {string} redId The node-red id of the hook
+   * @param {string} hookType The type of the hook
+   */
+  constructor(redId, hookType) {
+    super(`hook ${hookType} with multiple outputs`);
+    this.redId = redId;
+    this.hookType = hookType;
+  }
+}
+
+/**
+ *
+ * @class NodeAlreadyExistsError
+ * @classdesc The error occurs when a node with the given name was already registered
+ * @extends Error
+ */
+class NodeAlreadyExistsError extends Error {
+  /**
+   * @param {string} redId The node-red id of the node.
+   * @param {string} nodeName The name of the duplicate node
+   */
+  constructor(redId, nodeName) {
+    super(`node with the name ${nodeName} already exists`);
+    this.nodeName = nodeName;
+    this.redId = redId;
+  }
+}
+
+/**
  * ValidationError represents a config validation error in `fieldName`. Message is `message`
  * @extends Error
  */
@@ -31,6 +68,8 @@ function isFloat(n) {
 }
 
 module.exports = {
+  UndefinedHookPathError: UndefinedHookPathError,
+  NodeAlreadyExistsError: NodeAlreadyExistsError,
   ValidationError: ValidationError,
   isInt: isInt,
   isFloat: isFloat,

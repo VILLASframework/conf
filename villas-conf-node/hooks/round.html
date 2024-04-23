@@ -5,7 +5,7 @@
     defaults: {
       hooktype: { value: "round", required: true },
       precision: { value: 1 },
-      server: { value: "", type: "remote-server" },
+      signalId: { value: "", type: "signal-config" },
     },
     inputs: 1,
     outputs: 1,
@@ -28,8 +28,8 @@
     />
   </div>
   <div class="form-row">
-    <label for="node-input-server"><i class="fa fa-tag"></i> Server</label>
-    <input type="text" id="node-input-server" placeholder="Server" />
+    <label for="node-input-signalId"><i class="fa fa-tag"></i> Signal</label>
+    <input type="text" id="node-input-signalId" placeholder="Signal" />
   </div>
   <div class="form-row">
     <label for="node-input-precision"

@@ -1,0 +1,82 @@
+<script type="text/javascript">
+  RED.nodes.registerType("signal-config", {
+    category: "config",
+    defaults: {
+      signalId: { value: "testSignal", required: true },
+      "villas-name": { value: "", required: true },
+      "villas-signal": { value: "", required: true },
+      "villas-amplitude": { value: 1 },
+      "villas-frequency": { value: 1 },
+      "villas-phase": { value: 0 },
+      "villas-pulse_width": { value: 1 },
+      "villas-pulse_low": { value: 0 },
+      "villas-pulse_high": { value: 1 },
+      "villas-stddev": { value: 0.2 },
+      "villas-offset": { value: 0 },
+      "villas-unit": { value: "" },
+      "villas-type": { value: "float" },
+      "villas-init": { value: "" },
+      "villas-enabled": { value: true },
+    },
+    label: function () {
+      return this.signalId;
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="signal-config">
+  <div class="form-row">
+    <label for="node-config-input-signalId"
+      ><i class="fa fa-bookmark"></i> Signal Identifyer</label
+    >
+    <input type="text" id="node-config-input-signalId" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-villas-name"
+      ><i class="fa fa-bookmark"></i> name</label
+    >
+    <input type="text" id="node-config-input-villas-name" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-villas-signal"
+      ><i class="fa fa-bookmark"></i> signal</label
+    >
+    <select id="node-config-input-villas-type">
+      <option>random</option>
+      <option>sine</option>
+      <option>square</option>
+      <option>triangle</option>
+      <option>ramp</option>
+      <option>counter</option>
+      <option>constant</option>
+      <option>mixed</option>
+      <option>pulse</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-villas-amplitude"
+      ><i class="fa fa-bookmark"></i> amplitude</label
+    >
+    <input
+      type="number"
+      placeholder="1"
+      id="node-config-input-villas-amplitude"
+    />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-villas-frequency"
+      ><i class="fa fa-bookmark"></i> frequency</label
+    >
+    <input
+      type="number"
+      placeholder="1"
+      id="node-config-input-villas-frequency"
+    />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-villas-phase"
+      ><i class="fa fa-bookmark"></i> phase</label
+    >
+    <input type="number" placeholder="0" id="node-config-input-villas-phase" />
+  </div>
+</script>

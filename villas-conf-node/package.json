@@ -14,6 +14,7 @@
       "config-end": "nodes/config-end.js",
       "signal": "nodes/signal.js",
       "remote-server": "nodes/remote-server.js",
+      "signal-config": "nodes/signal-config.js",
       "rms": "hooks/rms.js",
       "round": "hooks/round.js"
     }

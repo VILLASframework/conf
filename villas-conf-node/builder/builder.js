@@ -1,38 +1,27 @@
-/**
- * @readonly
- * @enum {string}
- * See villas docs
- */
-const PathMode = {
-  ANY: "any",
-  ALL: "all",
-};
-
-/**
- * @typedef {Object} Path
- * @property {string} in
- * @property {string} out
- * @property {boolean} enabled
- * @property {boolean} reverse
- * @property {PathMode} mode
- * @property {string[]} mask
- * @property {number} rate - `>= 0`
- * @property {boolean} original_sequence_no
- * @property {any} hooks
- * @property {uuid} uuid
- * @property {any} affinity
- * @property {boolean} poll
- * @property {boolean} builtin
- * @property {number} queuelen
- */
+const crypto = require("crypto");
+const typedefs = require("./typedefs");
+const {
+  NodeAlreadyExistsError,
+  UndefinedHookPathError,
+} = require("./validation");
+const utils = require("./utils");
 
 /**
  * Configuration Builder to iteratively build and validate villas configurations to and from json
+ * @class
+ * @constructor
+ * @public
  */
 class ConfBuilder {
   constructor(jsonMsg) {
+    /**
+     * configuration is the configuation object being worked on.
+     * It is one property to ease the json serialization
+     * @type {typedefs.ConfBuilderConfig}
+     * @public
+     */
     this.config = {
-      nodes: jsonMsg?.nodes || [],
+      nodes: jsonMsg?.nodes || {},
       paths: jsonMsg?.paths || [],
       http: jsonMsg?.http,
       logging: jsonMsg?.logging,
@@ -41,6 +30,17 @@ class ConfBuilder {
       priority: jsonMsg?.priority,
       hugepages: jsonMsg?.hugepages,
     };
+
+    /**
+     * @type {Array.<typedefs.InternalPath>}
+     * @private
+     */
+    this._pending = [];
+    /**
+     * @type {utils.BidirecitonalMap}
+     * @private
+     */
+    this._nodeLookup = new utils.BidirecitonalMap();
   }
 
   validate() {
@@ -55,32 +55,101 @@ class ConfBuilder {
     //TODO: continue with checking paths
   }
 
-  addNode(name, config) {
-    // if (!name || typeof name === "string")
-    //   throw ValidationError("Name required of type string");
-    //
-    // if (name in this.config.nodes) {
-    //   throw Error("name already defined");
-    // }
-    //
-    //TODO: further validation on types
-    //validate(config)
+  /**
+   * Add a villas node to the configuration
+   * @param {string} redId Node-red node id for this node
+   * @param {string} name
+   * @param {any} config the node configuration
+   * @param {string[]} wires of this node
+   */
+  addNode(redId, name, config, wires = []) {
+    if (name in this.config.nodes) {
+      throw new NodeAlreadyExistsError(name);
+    }
 
+    // first we register our node.
     this.config.nodes[name] = config;
+    this._nodeLookup.set(name, redId);
+
+    //close pending wires ending with this node. (This is a node thus it allways ends a path when going through it)
+    this.config._pending
+      .filter((path) => path.next == redId)
+      .forEach((path) => {
+        this.closePending(path.pendingId, name);
+      });
+
+    //add pending paths if any
+    if (wires.length > 0) {
+      wires.forEach((nodeId) => {
+        this._pending.push({
+          _pendingId: crypto.randomUUID(),
+          start: name,
+          _startRedId: redId,
+          _next: nodeId,
+          hooks: [],
+        });
+      });
+    }
   }
 
   /**
-   * Add a path to the configuration
+   * !ONLY FOR INTERNAL USE!
+   * Add a path to the configuration.
    *
-   * @param {Path} config - Path configuration
+   * @param {InternalPath} config - Path configuration
    */
   addPath(config) {
     //TODO: validate Path
     //TODO validate In/Out nodes
+
+    /** @type{typedefs.Path} */
+    let path = {
+      ...config,
+    };
+    //remove all properites
+    delete path._next;
+    delete path._startRedId;
+    delete path._pendingId;
+
+    this.config.paths.push(path);
   }
 
-  addHook(config) {
+  /**
+   * Add a hook to a path
+   * @param {string} redId The node-red id of the hook "node"
+   * @param {any} config The configuration of the hook
+   * @param {string[]} wires The connected wrires from this hook
+   */
+  addHook(redId, config, wires) {
     //get the path to add the hook to.
+
+    // we have a limitation on something like this:
+    // |- Signal1(node) -|
+    //                   |- Round(hook) -- Print(hook)
+    // |- Signal2(node) -|
+    //
+    // should both paths end at Print or just one?
+    // for now we continue all paths to the end. But for something like this:
+    //
+    // |- Signal1(node) -|               |- Print1(hook)
+    //                   |- Round(hook) -|
+    // |- Signal2(node) -|               |- Print2(hook)
+    //
+    // this results in a undefined behaviour. Thus we cannot accept hooks with multiple outputs/wires
+
+    if (wires.length > 1) {
+      return new UndefinedHookPathError(redId, config.type | "empty");
+    }
+
+    //check for all pending paths that go through this hooks
+    this._pending
+      .filter((path) => {
+        return path._next === redId;
+      })
+      .forEach((path) => {
+        path.hooks.push(config);
+        if (wires.length == 1) path._next = wires[0]; //continue
+      });
   }
 
   /**
@@ -88,6 +157,9 @@ class ConfBuilder {
    * @returns A (partial) villas configuration
    */
   build() {
+    //close all pending paths
+    this.close();
+
     const replacer = (_, value) => {
       // Filtering out properties
       if (!value) {
@@ -99,8 +171,38 @@ class ConfBuilder {
     return JSON.stringify(this.config, replacer);
   }
 
+  /**
+   * closes a pending path.
+   * @param {import("crypto").UUID} pendingId the id of the pending path
+   * @param {string} [outNodeName] the name of the out node.
+   * @private
+   */
+  closePending(pendingId, outNodeName = "") {
+    const index = this._pending.findIndex(
+      (path) => path._pendingId === pendingId,
+    );
+    const path = this._pending[index];
+
+    if (outNodeName === "" || outNodeName === undefined)
+      path.out = [outNodeName];
+    this.addPath(path);
+
+    //remove elements from _pending
+    this.config._pending.splice(index, 1);
+  }
+
+  /**
+   * Close all pending paths
+   * This results in a (hopefully) valid villas configuration. Without this method additional infos for node-red are included.
+   */
+  close() {
+    this._pending.forEach((pending) => {
+      this.closePending(pending._pendingId);
+    });
+  }
+
   print() {
-    console.log("Generated json", this.config);
+    console.log("Generated json", this.build());
   }
 }
 

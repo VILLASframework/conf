@@ -5,7 +5,14 @@
     defaults: {
       nodetype: { value: "signal.v2", required: true },
       name: { value: "" },
-      server: { value: "", type: "remote-server" },
+      signalIdEncoded: { value: "" },
+      signalIdTemplate: { value: "", type: "signal-config" },
+      testEncoded: { value: "[]" },
+      "villas-realtime": { value: true },
+      "villas-limit": { value: 0 },
+      "villas-rate": { value: 0 },
+      "villas-monitor_missed": { value: false },
+      "villas-vectorize": { value: 1 },
     },
     inputs: 1,
     outputs: 1,
@@ -13,12 +20,103 @@
     label: function () {
       return this.name || "signal";
     },
+    oneditsave: function () {
+      const node = this;
+      const saveArray = (name) => {
+        const items = $(`.array-${name} .form-subrow`).children();
+        if (!items || items === undefined || items.length === 0) {
+          node[name] = [];
+          return;
+        }
+
+        let inputType = "";
+
+        const values = [];
+        for (const item of items) {
+          const input = $(item).find(":input").first();
+
+          if (inputType === "") {
+            inputType = input.prop("nodeName");
+          }
+
+          const value = input.val();
+          if (value !== undefined && value !== "") {
+            values.push(value);
+          }
+        }
+        node[name] = values;
+        $(`.array-${name} .array-encoded`)
+          .first()
+          .val(JSON.stringify({ values: values, type: inputType }));
+      };
+      saveArray("test");
+      saveArray("signalId");
+      console.log("Saved Array: ", node["signalId"]);
+      console.log("Saved encoded: ", $(`#node-input-${name}Enc`));
+    },
+    oneditprepare: function () {
+      const node = this;
+      const dialogForm = $("#dialog-form");
+      console.log("called");
+
+      /**
+       * @param {string} name - the name of the array property
+       */
+      const arrayConfigurator = (name) => {
+        const isSelect = $(`.array-template-${name}`).hasClass("select");
+        const addItem = (val = isSelect ? "_ADD_" : "") => {
+          const subrow = $(`.array-${name} .form-subrow`);
+          const template = $(`.array-template-${name}`).clone();
+
+          // now we have to edit the input for some thing to happen
+          const templateInput = template.find(":input").first();
+          const templateLabel = template.find("label").first();
+          const rowId = crypto.randomUUID();
+
+          // we should probably not use labels
+          templateInput.id = `array-input-${rowId}`;
+          templateLabel.for = `array-input-${rowId}`;
+          templateInput.val(val);
+
+          templateInput.on("change", () => {
+            if (templateInput.val() !== isSelect ? "_ADD_" : "")
+              addItem(isSelect ? "_ADD_" : "");
+            console.log("changed input value: ", templateInput.val());
+          });
+
+          if (template.hasClass("select")) {
+            template.find("a").remove();
+          }
+
+          // remove template identifier and thus not hidden and add to subrow
+          template.removeClass(`array-template-${name}`);
+          template.removeClass(`array-template`);
+          template.addClass(`array-row-${name} array-row`);
+          template.appendTo(subrow);
+        };
+
+        const subrow = $(`.array-${name} .form-subrow`);
+        console.log("node: ", node[name]);
+        if (node[name] === [] || node[name] === undefined) {
+          // the property is empty remove all current
+          addItem();
+        } else if (Array.isArray(node[name])) {
+          for (const item of node[name].filter((x) => x !== "_ADD_")) {
+            addItem(item);
+          }
+          addItem();
+        }
+      };
+
+      arrayConfigurator("test");
+      arrayConfigurator("signalId");
+    },
   });
 </script>
 
 <script type="text/html" data-template-name="signal">
   <div class="form-row">
-    <label for="node-input-nodetype"><i class="fa fa-tag"></i> Type</label>
+    <label for="node-input-nodetype"><i class="fa fa-tag"></i> type</label>
     <input
       type="text"
       id="node-input-nodetype"
@@ -27,9 +125,37 @@
       readonly
     />
   </div>
+
   <div class="form-row">
-    <label for="node-input-server"><i class="fa fa-tag"></i> Server</label>
-    <input type="text" id="node-input-server" placeholder="Server" />
+    <label for="node-input-villas-realtime"
+      ><i class="fa fa-tag"></i> realtime</label
+    >
+    <input type="checkbox" id="node-input-villas-realtime" placeholder="true" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-limit"><i class="fa fa-tag"></i> limit</label>
+    <input type="number" id="node-input-villas-limit" placeholder="0" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-rate"><i class="fa fa-tag"></i> rate</label>
+    <input type="number" id="node-input-villas-rate" placeholder="0" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-villas-monitor_missed"
+      ><i class="fa fa-tag"></i> monitor_missed</label
+    >
+    <input
+      type="checkbox"
+      id="node-input-villas-monitor_missed"
+      placeholder="0"
+    />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-signalId"><i class="fa fa-tag"></i> Signal</label>
+    <input type="text" id="node-input-signalId" placeholder="signal" />
   </div>
   <div class="form-row">
     <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
@@ -39,7 +165,47 @@
     <label for="node-input-name"><i class="fa fa-tag"></i> Name2</label>
     <input type="text" id="node-input-name" placeholder="Name" />
   </div>
+  <div class="form-row array array-test">
+    <input
+      type="text"
+      class="array-encoded"
+      id="node-input-testEncoded"
+      placeholder=""
+    />
+    <div class="array-template-test array-template">
+      <label for="node-input-test"><i class="fa fa-tag"></i> Test</label>
+      <input type="text" id="node-input-test" placeholder="test" />
+    </div>
+    <div class="form-subrow"></div>
+  </div>
+  <div class="form-row array array-signalId">
+    <input
+      type="text"
+      class="array-encoded"
+      id="node-input-signalIdEncoded"
+      placeholder=""
+    />
+    <div class="array-template-signalId array-template select">
+      <label for="node-template-signalIdTemplate"></label>
+      <input type="text" id="node-input-signalIdTemplate" placeholder="_ADD_" />
+    </div>
+    <div class="form-subrow" />
+  </div>
 </script>
+
+<style>
+  .array-encoded {
+    display: none !important;
+  }
+
+  .array-template {
+    display: none;
+  }
+
+  .form-row .form-subrow {
+    padding-left: 3px;
+  }
+</style>
 
 <script type="text/html" data-help-name="signal">
   <p>
