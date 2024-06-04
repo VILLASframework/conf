@@ -4,8 +4,14 @@
     color: "#ff0000",
     defaults: {
       hooktype: { value: "round", required: true },
-      precision: { value: 1 },
-      signalId: { value: "", type: "signal-config" },
+      // precision: { value: 1 },
+      // signalId: { value: "", type: "signal-config" },
+      "villas-type": { value: "round", required: true },
+      "villas-signalsEncoded": { value: "" },
+      "villas-signalsTemplate": { value: "", type: "signal-config" },
+      "villas-precision": { value: 1 },
+      "villas-enabled": { value: true },
+      "villas-priority": { value: "" },
     },
     inputs: 1,
     outputs: 1,
@@ -13,31 +19,148 @@
     label: function () {
       return "round";
     },
+    oneditsave: function () {
+      const saveArray = (name) => {
+        const items = $(`.array-${name} .form-subrow`).children();
+        if (!items || items === undefined || items.length === 0) {
+          node[name] = [];
+          return;
+        }
+
+        let inputType = "";
+
+        const values = [];
+        for (const item of items) {
+          const input = $(item).find(":input").first();
+
+          if (inputType === "") {
+            inputType = input.prop("nodeName");
+          }
+
+          const value = input.val();
+          if (value !== undefined && value !== "") {
+            values.push(value);
+          }
+        }
+        node[name] = values;
+        $(`.array-${name} .array-encoded`)
+          .first()
+          .val(JSON.stringify({ values: values, type: inputType }));
+      };
+      saveArray("villas-signals");
+    },
+    oneditprepare: function () {
+      /**
+       * @param {string} name - the name of the array property
+       */
+      const arrayConfigurator = (node, name) => {
+        const isSelect = $(`.array-template-${name}Template`).hasClass(
+          "select",
+        );
+        const addItem = (val = isSelect ? "_ADD_" : "") => {
+          const subrow = $(`.array-${name} .form-subrow`);
+          const template = $(`.array-template-${name}Template`).clone(true);
+
+          // now we have to edit the input for some thing to happen
+          const templateInput = template.find(":input").first();
+          const templateLabel = template.find("label").first();
+          const rowId = crypto.randomUUID();
+
+          // we should probably not use labels
+          templateInput.id = `array-input-${rowId}`;
+          templateLabel.for = `array-input-${rowId}`;
+          templateInput.val(val);
+
+          templateInput.on("change", () => {
+            const lastValue = $(`.array-${name} .form-subrow div`)
+              .last()
+              .find(":input")
+              .first()
+              .val();
+            const isLastEmpty = lastValue === "" || lastValue === "_ADD_";
+            if (!isLastEmpty) {
+              addItem(isSelect ? "_ADD_" : "");
+            }
+          });
+        };
+      };
+      arrayConfigurator("villas-signals");
+    },
   });
 </script>
 
 <script type="text/html" data-template-name="round">
   <div class="form-row">
-    <label for="node-input-hooktype"><i class="fa fa-tag"></i> Type</label>
+    <label for="node-input-villas-type"><i class="fa fa-tag"></i> Type</label>
     <input
       type="text"
-      id="node-input-hooktyp"
+      id="node-input-villas-type"
       placeholder="Type"
       value="round"
       readonly
     />
   </div>
-  <div class="form-row">
-    <label for="node-input-signalId"><i class="fa fa-tag"></i> Signal</label>
-    <input type="text" id="node-input-signalId" placeholder="Signal" />
+  <div class="form-row array array-villas-signals">
+    <input
+      type="text"
+      class="array-encoded"
+      id="node-input-villas-signalsEncoded"
+      placeholder=""
+    />
+    <div class="array-template-villas-signals array-template select">
+      <label for="node-template-villas-signalsTemplate"></label>
+      <input
+        type="text"
+        id="node-input-villas-signalsTemplate"
+        placeholder="_ADD_"
+      />
+    </div>
+    <div class="form-subrow"></div>
   </div>
   <div class="form-row">
-    <label for="node-input-precision"
-      ><i class="fa fa-tag"></i> Precision</label
-    >
-    <input type="number" id="node-input-precision" placeholder="1" />
+    <label for="node-input-villas-precision">Precision</label>
+    <input
+      type="number"
+      name="node-input-villas-precision"
+      id="node-input-villas-precision"
+      value="0"
+      min="0"
+      max="1000"
+    />
+  </div>
+  <div class="form-row">
+    <label for="node-input-villas-enabled">Enabled</label>
+    <input
+      type="checkbox"
+      name="node-input-villas-enabled"
+      id="node-input-villas-enabled"
+      placeholder="true"
+    />
+  </div>
+  <div class="form-row">
+    <label for="node-input-villas-priority">Priority</label>
+    <input
+      type="number"
+      name="node-input-villas-priority"
+      id="node-input-villas-priority"
+      placeholder="99"
+      value="99"
+    />
   </div>
 </script>
+<style>
+  .array-encoded {
+    display: none !important;
+  }
+
+  .array-template {
+    display: none;
+  }
+
+  .form-row .form-subrow {
+    padding-left: 3px;
+  }
+</style>
 
 <script type="text/html" data-help-name="round">
   <p>A simple hook to test hook behaviour</p>

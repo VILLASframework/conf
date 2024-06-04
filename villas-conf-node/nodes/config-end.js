@@ -12,6 +12,9 @@ module.exports = function (RED) {
      * @param {impot("../typedefs").Message} _msg
      */
     const inputHandler = function (_msg) {
+      // TODO: save to file and propt user to download it.
+
+      console.log(" #### BUILDER DEBUG PRINT ### ");
       builder.print();
     };
     node.on("input", inputHandler);

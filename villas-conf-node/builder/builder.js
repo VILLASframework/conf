@@ -72,7 +72,7 @@ class ConfBuilder {
     this._nodeLookup.set(name, redId);
 
     //close pending wires ending with this node. (This is a node thus it allways ends a path when going through it)
-    this.config._pending
+    this._pending
       .filter((path) => path.next == redId)
       .forEach((path) => {
         this.closePending(path.pendingId, name);
@@ -83,13 +83,15 @@ class ConfBuilder {
       wires.forEach((nodeId) => {
         this._pending.push({
           _pendingId: crypto.randomUUID(),
-          start: name,
+          in: name,
           _startRedId: redId,
           _next: nodeId,
           hooks: [],
         });
       });
     }
+
+    console.log(`${config.type}:${name} added`);
   }
 
   /**
@@ -168,7 +170,7 @@ class ConfBuilder {
       return value;
     };
 
-    return JSON.stringify(this.config, replacer);
+    return JSON.stringify(this.config, replacer, 2);
   }
 
   /**
@@ -183,12 +185,11 @@ class ConfBuilder {
     );
     const path = this._pending[index];
 
-    if (outNodeName === "" || outNodeName === undefined)
-      path.out = [outNodeName];
-    this.addPath(path);
+    if (outNodeName !== undefined && outNodeName !== "") path.out = outNodeName;
 
+    this.addPath(path);
     //remove elements from _pending
-    this.config._pending.splice(index, 1);
+    this._pending.splice(index, 1);
   }
 
   /**

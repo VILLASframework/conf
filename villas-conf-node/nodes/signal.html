@@ -13,6 +13,10 @@
       "villas-rate": { value: 0 },
       "villas-monitor_missed": { value: false },
       "villas-vectorize": { value: 1 },
+      "villasobj-in": { value: "1" },
+      "villasobj-in-signals": { value: "", type: "signal-config" },
+      "villasobj-in-vectorize": { value: 1 },
+      "villasobj-in-hooks": { value: "" },
     },
     inputs: 1,
     outputs: 1,
@@ -22,7 +26,7 @@
     },
     oneditsave: function () {
       const node = this;
-      const saveArray = (name) => {
+      const saveArray = (node, name) => {
         const items = $(`.array-${name} .form-subrow`).children();
         if (!items || items === undefined || items.length === 0) {
           node[name] = [];
@@ -49,24 +53,25 @@
           .first()
           .val(JSON.stringify({ values: values, type: inputType }));
       };
-      saveArray("test");
-      saveArray("signalId");
-      console.log("Saved Array: ", node["signalId"]);
-      console.log("Saved encoded: ", $(`#node-input-${name}Enc`));
+      saveArray(this, "test");
+      saveArray(this, "signalId");
     },
     oneditprepare: function () {
       const node = this;
       const dialogForm = $("#dialog-form");
-      console.log("called");
+
+      const objectConfigurator = (node, name) => {
+        const encodedInput = $(`.object-${name}Encoded`) || [];
+      };
 
       /**
        * @param {string} name - the name of the array property
        */
-      const arrayConfigurator = (name) => {
+      const arrayConfigurator = (node, name) => {
         const isSelect = $(`.array-template-${name}`).hasClass("select");
         const addItem = (val = isSelect ? "_ADD_" : "") => {
           const subrow = $(`.array-${name} .form-subrow`);
-          const template = $(`.array-template-${name}`).clone();
+          const template = $(`.array-template-${name}`).clone(true);
 
           // now we have to edit the input for some thing to happen
           const templateInput = template.find(":input").first();
@@ -79,14 +84,20 @@
           templateInput.val(val);
 
           templateInput.on("change", () => {
-            if (templateInput.val() !== isSelect ? "_ADD_" : "")
+            const lastValue = $(`.array-${name} .form-subrow div`)
+              .last()
+              .find(":input")
+              .first()
+              .val();
+            const isLastEmpty = lastValue === "" || lastValue === "_ADD_";
+            if (!isLastEmpty) {
               addItem(isSelect ? "_ADD_" : "");
-            console.log("changed input value: ", templateInput.val());
+            }
           });
 
-          if (template.hasClass("select")) {
+          /* if (template.hasClass("select")) {
             template.find("a").remove();
-          }
+          } */
 
           // remove template identifier and thus not hidden and add to subrow
           template.removeClass(`array-template-${name}`);
@@ -95,21 +106,30 @@
           template.appendTo(subrow);
         };
 
-        const subrow = $(`.array-${name} .form-subrow`);
         console.log("node: ", node[name]);
-        if (node[name] === [] || node[name] === undefined) {
-          // the property is empty remove all current
-          addItem();
-        } else if (Array.isArray(node[name])) {
+
+        if (node[name] !== undefined && Array.isArray(node[name])) {
           for (const item of node[name].filter((x) => x !== "_ADD_")) {
             addItem(item);
           }
-          addItem();
+        } else if (
+          node[`${name}Encoded`] !== undefined &&
+          node[`${name}Encoded`] !== ""
+        ) {
+          const decoded = JSON.parse(node[`${name}Encoded`]).values;
+          for (const item of decoded.filter((x) => x !== "_ADD_")) {
+            addItem(item);
+          }
         }
+
+        // finally add last empty/default item
+        addItem();
       };
 
-      arrayConfigurator("test");
-      arrayConfigurator("signalId");
+      arrayConfigurator(node, "test");
+      arrayConfigurator(node, "signalId");
+
+      console.log("NODes: ", RED.nodes);
     },
   });
 </script>

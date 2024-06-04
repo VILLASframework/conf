@@ -1,3 +1,5 @@
+const { cleanProps } = require("../utils/backend");
+
 module.exports = function (RED) {
   function SignalNode(config) {
     RED.nodes.createNode(this, config);
@@ -38,8 +40,12 @@ module.exports = function (RED) {
 
             delete parsedConfig[`${parsedPropName}Template`];
           }
+          delete parsedConfig[`${parsedPropName}Encoded`];
         }
       }
+
+      // clean unwanted configs
+      cleanProps(parsedConfig);
 
       console.log("OUTPUT: ", {
         ...parsedConfig,
@@ -47,6 +53,8 @@ module.exports = function (RED) {
         id: this.id,
         wires: wires,
       });
+
+      builder.addNode(this.id, parsedConfig.name, parsedConfig, wires);
 
       msg.payload.origin = this.nodetype;
       msg.payload.originId = this.id;

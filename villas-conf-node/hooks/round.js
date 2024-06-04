@@ -1,3 +1,5 @@
+const { decomposeArrays, cleanProps } = require("../utils/backend");
+
 module.exports = function (RED) {
   function RoundNode(config) {
     RED.nodes.createNode(this, config);
@@ -19,6 +21,11 @@ module.exports = function (RED) {
 
       console.log("HOOK WIRES: ", wires);
       //builder.addHook(this.id, { test: 2 }, wires);
+
+      let parsed = decomposeArrays(config);
+      let cleaned = cleanProps(parsed);
+
+      builder.addHook(this.id, cleaned, wires);
 
       msg.payload.origin = this.hooktype;
       msg.payload.originId = this.id;

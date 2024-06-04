@@ -5,7 +5,7 @@
 type: object
 title: Format Object
 required:
-- type
+  - type
 properties:
   type:
     type: string
