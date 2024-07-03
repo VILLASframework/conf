@@ -137,7 +137,7 @@ class ConfBuilder {
     //                   |- Round(hook) -|
     // |- Signal2(node) -|               |- Print2(hook)
     //
-    // this results in a undefined behaviour. Thus we cannot accept hooks with multiple outputs/wires
+    // this results in a undefined behavior. Thus we cannot accept hooks with multiple outputs/wires
 
     if (wires.length > 1) {
       return new UndefinedHookPathError(redId, config.type | "empty");

@@ -3,143 +3,391 @@
     category: "function",
     color: "#ff0000",
     defaults: {
-      nodetype: { value: "signal.v2", required: true },
+      SERIALIZED: { value: "" },
       name: { value: "" },
-      signalIdEncoded: { value: "" },
-      signalIdTemplate: { value: "", type: "signal-config" },
-      testEncoded: { value: "[]" },
-      "villas-realtime": { value: true },
-      "villas-limit": { value: 0 },
-      "villas-rate": { value: 0 },
-      "villas-monitor_missed": { value: false },
-      "villas-vectorize": { value: 1 },
-      "villasobj-in": { value: "1" },
-      "villasobj-in-signals": { value: "", type: "signal-config" },
-      "villasobj-in-vectorize": { value: 1 },
-      "villasobj-in-hooks": { value: "" },
+      signalIdTemplate: { value: "", type: "signal.v2-signal-config-in" },
     },
     inputs: 1,
     outputs: 1,
     icon: "file.svg",
     label: function () {
-      return this.name || "signal";
+      return `signal.v2 ${this.name}`;
     },
     oneditsave: function () {
       const node = this;
-      const saveArray = (node, name) => {
-        const items = $(`.array-${name} .form-subrow`).children();
-        if (!items || items === undefined || items.length === 0) {
-          node[name] = [];
+      // ---- UTILS ---- Paste in both oneditsave and oneditprepare
+      /**
+       * @param {any} obj
+       * @param {Array<string>} path
+       * @param {any} val
+       */
+      const setNestedProp = (obj, path, val) => {
+        let ref = obj;
+        const last = path[path.length - 1];
+        for (const propName of path.slice(0, -1)) {
+          if (!ref[propName]) ref[propName] = {};
+          ref = ref[propName];
+        }
+        ref[last] = val;
+      };
+      /**
+       * @param {any} obj
+       * @param {Array<string>} path
+       */
+      const getNestedProp = (obj, path) => {
+        if (!path || path.length == 0) {
           return;
         }
-
-        let inputType = "";
-
-        const values = [];
-        for (const item of items) {
-          const input = $(item).find(":input").first();
-
-          if (inputType === "") {
-            inputType = input.prop("nodeName");
-          }
-
-          const value = input.val();
-          if (value !== undefined && value !== "") {
-            values.push(value);
-          }
+        let ref = obj;
+        const last = path[path.length - 1];
+        for (const propName of path.slice(0, -1)) {
+          if (!ref[propName]) ref[propName] = {};
+          ref = ref[propName];
         }
-        node[name] = values;
-        $(`.array-${name} .array-encoded`)
-          .first()
-          .val(JSON.stringify({ values: values, type: inputType }));
+        return ref[last];
       };
-      saveArray(this, "test");
-      saveArray(this, "signalId");
-    },
-    oneditprepare: function () {
-      const node = this;
-      const dialogForm = $("#dialog-form");
+      // ---- HANDLE_ON_SAVE ---- Paste in  oneditsave
+      const handleOnSave = (node) => {
+        const recursiveSave = (config, names) => {
+          for (const name in config) {
+            const type = config[name];
+            if (typeof type === "string") {
+              switch (type) {
+                case "select-array":
+                case "array":
+                  saveArray(node, [...names, name], type);
+                  break;
+                case "checkbox":
+                  saveCheckbox(node, [...names, name], type);
+                  break;
+                default:
+                  //normal input
+                  saveRegularInput(node, [...names, name], type);
+                  break;
+              }
+            } else if (typeof type === "object") {
+              recursiveSave(config[name], [...names, name]);
+            }
+          }
+        };
 
-      const objectConfigurator = (node, name) => {
-        const encodedInput = $(`.object-${name}Encoded`) || [];
+        recursiveSave(node.propConfig.props, []);
+        const json = JSON.stringify(node.propConfig);
+
+        node["SERIALIZED"] = json;
+        $("#node-input-SERIALIZED").val(json);
       };
 
       /**
-       * @param {string} name - the name of the array property
+       * @param {any} node
+       * @param {Array<string>} names
+       * @param {any} type
        */
-      const arrayConfigurator = (node, name) => {
-        const isSelect = $(`.array-template-${name}`).hasClass("select");
-        const addItem = (val = isSelect ? "_ADD_" : "") => {
-          const subrow = $(`.array-${name} .form-subrow`);
-          const template = $(`.array-template-${name}`).clone(true);
+      function saveRegularInput(node, names, _type) {
+        const el = document.getElementById(`villas-input-${names.join("-")}`);
+        if (!el) {
+          console.error("Failed finding input ", ...names);
+          return;
+        }
+        if (
+          el.tagName == "INPUT" ||
+          el.tagName == "SELECT" ||
+          el.tagName == "TEXTAREA"
+        ) {
+          setNestedProp(node.propConfig.values, names, el.value);
+        }
+      }
+
+      /**
+       * @param {any} node
+       * @param {Array<string>} names
+       * @param {any} type
+       */
+      const saveCheckbox = (node, names, _type) => {
+        const el = document.getElementById(`villas-input-${names.join("-")}`);
+        if (!el) {
+          console.error("Failed finding input ", ...names);
+          return;
+        }
+        setNestedProp(node.propConfig.values, names, el.checked);
+      };
+
+      /**
+       * @param {any} node
+       * @param {Array<string>} names
+       * @param {any} type
+       */
+      const saveArray = (node, names, type) => {
+        const containerName = `#villas-array-${names.join("-")} .form-subrow`;
+        const rows = $(containerName).children();
+
+        if (!rows || rows === undefined || rows.length === 0) {
+          setNestedProp(node.propConfig.values, names, []);
+          return;
+        }
+
+        let defaultValue = "";
+        switch (type) {
+          case "select-array":
+            defaultValue = "_ADD_";
+            break;
+          default:
+            defaultValue = "";
+            break;
+        }
+
+        let items = getNestedProp(node.propConfig.values, names);
+        if (!items || !Array.isArray(items)) {
+          items = [];
+        }
+        for (const row of rows) {
+          const value = $(row).find(":input").first().val();
+          if (value == defaultValue || items.includes(value)) {
+            //skip
+            continue;
+          }
+
+          items.push(value);
+        }
+        setNestedProp(node.propConfig.values, names, items);
+      };
+      handleOnSave(node);
+    },
+    oneditprepare: function () {
+      const node = this;
+      // ---- UTILS ---- Paste in both oneditsave and oneditprepare
+      /**
+       * @param {any} obj
+       * @param {Array<string>} path
+       * @param {any} val
+       */
+      const setNestedProp = (obj, path, val) => {
+        let ref = obj;
+        const last = path[path.length - 1];
+        for (const propName of path.slice(0, -1)) {
+          if (!ref[propName]) ref[propName] = {};
+          ref = ref[propName];
+        }
+        ref[last] = val;
+      };
+      /**
+       * @param {any} obj
+       * @param {Array<string>} path
+       */
+      const getNestedProp = (obj, path) => {
+        if (!path || path.length == 0) {
+          return;
+        }
+        let ref = obj;
+        const last = path[path.length - 1];
+        for (const propName of path.slice(0, -1)) {
+          if (!ref[propName]) ref[propName] = {};
+          ref = ref[propName];
+        }
+        return ref[last];
+      };
+      // ---- CONFIGURE ---- Paste before HANDLE_ON_EDIT
+      /**
+       * @param {any} node (propably `this`)
+       * @param {any} name the name of the property
+       * @param {any} type - The type of the property. Options are : "input", "checkbox", "array", objects of defined shape (see examples)
+       * @param {any} defaultValue
+       * @example
+       * Configure simple inputs
+       * configureProp(node, "realtime", "checkbox")
+       *
+       * When configuring objects can be done by giving the object types and default value as objects.
+       * configureProp(node, "in", {signal: "array"}, {signal: []})`
+       */
+      const configureProp = (node, name, type, defaultValue) => {
+        if (!node?.propConfig?.props) {
+          node.propConfig = {
+            props: {},
+            values: {},
+          };
+        }
+
+        node.propConfig.props[name] = type;
+        if (defaultValue) {
+          node.propConfig.values[name] = defaultValue;
+        }
+      };
+
+      // ---- HANDLE_ON_EDIT ----
+      const handleOnEdit = (node) => {
+        const json = $("#node-input-SERIALIZED").val();
+        if (json !== "") {
+          node.propConfig.values = JSON.parse(json).values;
+        }
+
+        const recursivePrepare = (config, names) => {
+          for (const name in config) {
+            const type = config[name];
+            if (typeof type === "string") {
+              switch (type) {
+                case "select-array":
+                case "array":
+                  prepareArray(node, [...names, name], type);
+                  break;
+                case "checkbox":
+                  prepareCheckbox(node, [...names, name], type);
+                  break;
+                default:
+                  prepareRegularInput(node, [...names, name], type);
+                  break;
+              }
+            } else if (typeof type === "object") {
+              recursivePrepare(config[name], [...names, name]);
+            }
+          }
+        };
+        recursivePrepare(node.propConfig.props, []);
+      };
+
+      const prepareCheckbox = (node, names, _type) => {
+        const el = document.getElementById(`villas-input-${names.join("-")}`);
+        if (!el) {
+          console.error("Failed to find input", ...names);
+          return;
+        }
+        el.checked = getNestedProp(node.propConfig.values, names);
+      };
+      const prepareRegularInput = (node, names, _type) => {
+        const el = document.getElementById(`villas-input-${names.join("-")}`);
+        if (!el) {
+          console.error("Failed to find input", ...names);
+          return;
+        }
+        if (
+          el.tagName == "INPUT" ||
+          el.tagName == "SELECT" ||
+          el.tagName == "TEXTAREA"
+        ) {
+          el.value = getNestedProp(node.propConfig.values, names);
+        }
+      };
+
+      /**
+       * @param {any} node
+       * @param {Array<string>} names
+       * @param {string} type
+       */
+      const prepareArray = (node, names, type) => {
+        const combinedName = names.join("-");
+        //specifiers: We utilize a strict naming convention
+        const rowName = `villas-array-row-${combinedName} array-row`;
+        const templateName = `#villas-array-template-${combinedName}`;
+        const containerName = `#villas-array-${combinedName} .form-subrow`;
+        const container = $(containerName);
+
+        let defaultValue = "";
+        switch (type) {
+          case "select-array":
+            defaultValue = "_ADD_";
+            break;
+          default:
+            defaultValue = "";
+            break;
+        }
+
+        const addItem = (val) => {
+          const copy = $(templateName).clone(true);
 
           // now we have to edit the input for some thing to happen
-          const templateInput = template.find(":input").first();
-          const templateLabel = template.find("label").first();
+          const copyInput = copy.find(":input").first();
           const rowId = crypto.randomUUID();
+          const templateLabel = copy.find("label").first();
 
-          // we should probably not use labels
-          templateInput.id = `array-input-${rowId}`;
-          templateLabel.for = `array-input-${rowId}`;
-          templateInput.val(val);
+          // we should probably not use id's
+          copyInput.id = `villlas-input-${combinedName}-${rowId}`;
+          templateLabel.for = `villas-input-${combinedName}-${rowId}`;
+          copyInput.val(val);
 
-          templateInput.on("change", () => {
-            const lastValue = $(`.array-${name} .form-subrow div`)
+          copyInput.on("change", () => {
+            const lastValue = container
+              .children()
               .last()
               .find(":input")
               .first()
               .val();
-            const isLastEmpty = lastValue === "" || lastValue === "_ADD_";
-            if (!isLastEmpty) {
-              addItem(isSelect ? "_ADD_" : "");
+            if (lastValue !== defaultValue) {
+              addItem(defaultValue);
             }
           });
 
-          /* if (template.hasClass("select")) {
-            template.find("a").remove();
-          } */
-
           // remove template identifier and thus not hidden and add to subrow
-          template.removeClass(`array-template-${name}`);
-          template.removeClass(`array-template`);
-          template.addClass(`array-row-${name} array-row`);
-          template.appendTo(subrow);
+          copy.removeClass(templateName);
+          copy.removeClass(`array-template`);
+          copy.addClass(rowName);
+          copy.appendTo(container);
         };
 
-        console.log("node: ", node[name]);
-
-        if (node[name] !== undefined && Array.isArray(node[name])) {
-          for (const item of node[name].filter((x) => x !== "_ADD_")) {
-            addItem(item);
-          }
-        } else if (
-          node[`${name}Encoded`] !== undefined &&
-          node[`${name}Encoded`] !== ""
-        ) {
-          const decoded = JSON.parse(node[`${name}Encoded`]).values;
-          for (const item of decoded.filter((x) => x !== "_ADD_")) {
+        const items = getNestedProp(node.propConfig.values, names);
+        if (Array.isArray(items)) {
+          for (const item of items) {
             addItem(item);
           }
         }
 
-        // finally add last empty/default item
-        addItem();
+        // add extra at the bottom
+        addItem(defaultValue);
       };
 
-      arrayConfigurator(node, "test");
-      arrayConfigurator(node, "signalId");
-
-      console.log("NODes: ", RED.nodes);
+      // CONFIGURATION
+      configureProp(node, "type", "input", "signal.v2");
+      configureProp(node, "realtime", "checkbox", true);
+      configureProp(node, "limit", "input", 0);
+      configureProp(node, "rate", "input");
+      configureProp(node, "monitor_missed", "checkbox", false);
+      configureProp(
+        node,
+        "in",
+        {
+          signal: "select-array",
+          vectorize: "input",
+          hooks: "input",
+        },
+        {
+          signal: [],
+          vectorize: 1,
+          hooks: "",
+        },
+      );
+      configureProp(node, "vectorize", "input", 1);
+      configureProp(node, "hooks", "input", "");
+      configureProp(node, "builtin", "checkbox", true);
+      configureProp(
+        node,
+        "out",
+        {
+          vectorize: "input",
+          hooks: "input",
+        },
+        { vectorize: 1, hooks: "" },
+      );
+      handleOnEdit(node);
     },
   });
 </script>
 
 <script type="text/html" data-template-name="signal">
+  <div class="hidden form-row">
+    <input type="text" id="node-input-SERIALIZED" placeholder="" />
+  </div>
   <div class="form-row">
-    <label for="node-input-nodetype"><i class="fa fa-tag"></i> type</label>
+    <label for="node-input-name"><i class="fa fa-tag"></i> name</label>
     <input
       type="text"
-      id="node-input-nodetype"
+      id="node-input-name"
+      placeholder="signal.v2"
+      value="signal.v2"
+    />
+  </div>
+  <div class="form-row">
+    <label for="villas-input-type"><i class="fa fa-tag"></i> type</label>
+    <input
+      type="text"
+      id="villas-input-type"
       placeholder="Type"
       value="signal.v2"
       readonly
@@ -147,69 +395,91 @@
   </div>
 
   <div class="form-row">
-    <label for="node-input-villas-realtime"
+    <label for="villas-input-realtime"
       ><i class="fa fa-tag"></i> realtime</label
     >
-    <input type="checkbox" id="node-input-villas-realtime" placeholder="true" />
+    <input type="checkbox" id="villas-input-realtime" placeholder="true" />
   </div>
 
   <div class="form-row">
-    <label for="node-input-villas-limit"><i class="fa fa-tag"></i> limit</label>
-    <input type="number" id="node-input-villas-limit" placeholder="0" />
+    <label for="villas-input-limit"><i class="fa fa-tag"></i> limit</label>
+    <input type="number" id="villas-input-limit" placeholder="0" />
   </div>
 
   <div class="form-row">
-    <label for="node-input-villas-rate"><i class="fa fa-tag"></i> rate</label>
-    <input type="number" id="node-input-villas-rate" placeholder="0" />
+    <label for="villas-input-rate"><i class="fa fa-tag"></i> rate</label>
+    <input type="number" id="villas-input-rate" placeholder="0" />
   </div>
   <div class="form-row">
-    <label for="node-input-villas-monitor_missed"
+    <label for="villas-input-monitor_missed"
       ><i class="fa fa-tag"></i> monitor_missed</label
     >
-    <input
-      type="checkbox"
-      id="node-input-villas-monitor_missed"
-      placeholder="0"
-    />
+    <input type="checkbox" id="villas-input-monitor_missed" placeholder="0" />
   </div>
 
-  <div class="form-row">
-    <label for="node-input-signalId"><i class="fa fa-tag"></i> Signal</label>
-    <input type="text" id="node-input-signalId" placeholder="signal" />
+  <div class="object form-row">
+    <span>In:</span>
+    <div id="villas-array-in-signal">
+      <div
+        id="villas-array-template-in-signal"
+        class="villas-array-template-in-signal array-template"
+      >
+        <label for="node-input-signalIdTemplate"></label>
+        <input
+          type="text"
+          id="node-input-signalIdTemplate"
+          placeholder="_ADD_"
+        />
+      </div>
+      <div class="form-subrow"></div>
+    </div>
+
+    <div class="form-row">
+      <label for="villas-input-in-vectorize">Vectorize</label>
+      <input type="number" value="1" id="villas-input-in-vectorize" />
+    </div>
+    <div class="form-row">
+      <label for="villas-input-in-hooks">Hooks</label>
+      <input
+        type="text"
+        value=""
+        placeholder='["print"]'
+        id="villas-input-in-hooks"
+      />
+    </div>
   </div>
   <div class="form-row">
-    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-    <input type="text" id="node-input-name" placeholder="Name" />
+    <label for="villas-input-vectorize">Vectorize</label>
+    <input type="number" value="1" id="villas-input-vectorize" />
   </div>
   <div class="form-row">
-    <label for="node-input-name"><i class="fa fa-tag"></i> Name2</label>
-    <input type="text" id="node-input-name" placeholder="Name" />
-  </div>
-  <div class="form-row array array-test">
+    <label for="villas-input-hooks">Hooks</label>
     <input
       type="text"
-      class="array-encoded"
-      id="node-input-testEncoded"
-      placeholder=""
+      value=""
+      placeholder='["print"]'
+      id="villas-input-hooks"
     />
-    <div class="array-template-test array-template">
-      <label for="node-input-test"><i class="fa fa-tag"></i> Test</label>
-      <input type="text" id="node-input-test" placeholder="test" />
-    </div>
-    <div class="form-subrow"></div>
   </div>
-  <div class="form-row array array-signalId">
-    <input
-      type="text"
-      class="array-encoded"
-      id="node-input-signalIdEncoded"
-      placeholder=""
-    />
-    <div class="array-template-signalId array-template select">
-      <label for="node-template-signalIdTemplate"></label>
-      <input type="text" id="node-input-signalIdTemplate" placeholder="_ADD_" />
+  <div class="form-row">
+    <label for="villas-input-builtin">builtin</label>
+    <input type="checkbox" value="true" id="villas-input-builtin" />
+  </div>
+  <div class="object">
+    <span>out:</span>
+    <div class="form-row">
+      <label for="villas-input-out-vectorize">Vectorize</label>
+      <input type="number" value="1" id="villas-input-out-vectorize" />
     </div>
-    <div class="form-subrow" />
+    <div class="form-row">
+      <label for="villas-input-out-hooks">Hooks</label>
+      <input
+        type="text"
+        value=""
+        placeholder='["print"]'
+        id="villas-input-out-hooks"
+      />
+    </div>
   </div>
 </script>
 

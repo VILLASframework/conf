@@ -13,10 +13,10 @@
       "config-start": "nodes/config-start.js",
       "config-end": "nodes/config-end.js",
       "signal": "nodes/signal.js",
-      "remote-server": "nodes/remote-server.js",
-      "signal-config": "nodes/signal-config.js",
       "rms": "hooks/rms.js",
-      "round": "hooks/round.js"
+      "round": "hooks/round.js",
+      "signal.v2-signal-config-in": "nodes/signal.v2-signal-config-in.js",
+      "signal.v2-signal-config-out": "nodes/signal.v2-signal-config-out.js"
     }
   },
   "dependencies": {

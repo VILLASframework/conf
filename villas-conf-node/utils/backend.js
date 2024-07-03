@@ -1,3 +1,58 @@
+// ---- UTILS ---- Paste in both oneditsave and oneditprepare
+/**
+ * @param {any} obj
+ * @param {Array<string>} path
+ * @param {any} val
+ */
+const setNestedProp = (obj, path, val) => {
+  let ref = obj;
+  const last = path[path.length - 1];
+  for (const propName of path.slice(0, -1)) {
+    if (!ref[propName]) ref[propName] = {};
+    ref = ref[propName];
+  }
+  ref[last] = val;
+};
+/**
+ * @param {any} obj
+ * @param {Array<string>} path
+ */
+const getNestedProp = (obj, path) => {
+  let ref = obj;
+  const last = path[path.length - 1];
+  for (const propName of path.slice(0, -1)) {
+    if (!ref[propName]) ref[propName] = {};
+    ref = ref[propName];
+  }
+  return ref[last];
+};
+/**
+ * @param {any} RED
+ * @param {any} globalConfig
+ * @param {any} config
+ * @param {Array<string>} names
+ */
+function expandSignals(RED, globalConfig, config, names) {
+  for (const name in config) {
+    const type = config[name];
+    console.log("type: ", type);
+    if (type === "select-array") {
+      console.log(globalConfig.values);
+      const arr = getNestedProp(globalConfig.values, [...names, name]);
+      for (const id of arr) {
+        console.log(id);
+        setNestedProp(
+          globalConfig.values,
+          [...names, name],
+          RED.nodes.getNode(id),
+        );
+      }
+    } else if (typeof type === "object") {
+      expandSignals(RED, globalConfig, config[name], [...names, name]);
+    }
+  }
+}
+
 /**
  * Renames all props after the standardized villas- convention and adds them to `target`
  * If it should rename the keys, set `props=target`
@@ -17,26 +72,6 @@ function renameProps(props, target, deleteOld = true) {
   }
 }
 
-function deserializeProps(prop) {
-	const decoded = JSON.parse(prop);
-	const parseAndCleanProps(decoded);
-  for (const property in props) {
-    if (/^villasobj-.+/.test(property)) {
-      //decompose the json object to an javascript object
-
-      try {
-        const decoded = JSON.parse(props[property]);
-      } catch (_err) {
-        throw new Error("JSON parsing error");
-      }
-    }
-  }
-}
-
-function parseAndCleanProps(){
-	
-}
-
 function cleanProps(props) {
   delete props.x;
   delete props.y;
@@ -46,49 +81,8 @@ function cleanProps(props) {
   delete props.id;
 }
 
-function decomposeObject(props) {
-  for (const property in props) {
-    if (/^villasobj-.+/.test(property)) {
-      //decompose the json object to an javascript object
-
-      try {
-        const decoded = JSON.parse(props[property]);
-      } catch (_err) {
-        throw new Error("JSON parsing error");
-      }
-    }
-  }
-}
-
-function decomposeArrays(props) {
-  const clone = { ...props };
-  for (const property in props) {
-    if (/^.+Encoded$/.test(property)) {
-      const parsedPropName = property.slice(
-        0,
-        property.length - "Encoded".length,
-      );
-
-      const parsed = JSON.parse(props[property]);
-
-      if (parsed.type === "INPUT") {
-        clone[parsedPropName] = parsed.values;
-      } else {
-        const filtered = parsed.values.filter((x) => x !== "_ADD_");
-        clone[parsedPropName] = filtered.map((item) => {
-          return RED.nodes.getNode(item);
-        });
-
-        delete clone[`${parsedPropName}Template`];
-      }
-      delete clone[`${parsedPropName}Encoded`];
-    }
-  }
-}
-
 module.exports = {
   cleanProps: cleanProps,
   renameProps: renameProps,
-  decomposeObject: decomposeObject,
-  decomposeArrays: decomposeArrays,
+  expandSignals: expandSignals,
 };

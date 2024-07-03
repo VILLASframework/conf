@@ -2,7 +2,6 @@
   RED.nodes.registerType("signal-config", {
     category: "config",
     defaults: {
-      signalId: { value: "testSignal", required: true },
       "villas-name": { value: "", required: true },
       "villas-signal": { value: "", required: true },
       "villas-amplitude": { value: 1 },
@@ -25,12 +24,6 @@
 </script>
 
 <script type="text/html" data-template-name="signal-config">
-  <div class="form-row">
-    <label for="node-config-input-signalId"
-      ><i class="fa fa-bookmark"></i> Signal Identifyer</label
-    >
-    <input type="text" id="node-config-input-signalId" />
-  </div>
   <div class="form-row">
     <label for="node-config-input-villas-name"
       ><i class="fa fa-bookmark"></i> name</label
