@@ -11,6 +11,7 @@
   "node-red": {
     "nodes": {
       "config-start": "nodes/config-start.js",
+      "villas-file": "nodes/Villas-file.js",
       "config-end": "nodes/config-end.js",
       "signal": "nodes/signal.js",
       "rms": "hooks/rms.js",
