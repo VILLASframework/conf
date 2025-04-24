@@ -1,0 +1,102 @@
+<script type="text/javascript">
+    RED.nodes.registerType('villas-socket', {
+        category: 'network',
+        defaults: {
+            name: { value: "" },
+            layer: { value: "udp" },
+            format: { value: "villas.human" },
+            verify_source: { value: false },
+            vectorize: { value: 1 },
+            address_in: { value: "127.0.0.1:12001" },
+            address_out: { value: "127.0.0.1:12000" },
+            hooks: { value: ["print"] },
+            builtin: { value: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        color: "#a6bbcf",
+        icon: "network.svg",
+        label: function() {
+            return this.name || "socket";
+        },
+        oneditprepare: function() {
+            $("#node-input-name").val(this.name);
+            $("#node-input-layer").val(this.layer);
+            $("#node-input-format").val(this.format);
+            $("#node-input-verify_source").prop("checked", this.verify_source);
+            $("#node-input-vectorize").val(this.vectorize);
+            $("#node-input-address_in").val(this.address_in);
+            $("#node-input-address_out").val(this.address_out);
+            $("#node-input-hooks").val(JSON.stringify(this.hooks, null, 2));
+        },
+        oneditsave: function() {
+            this.name = $("#node-input-name").val();
+            this.layer = $("#node-input-layer").val();
+            this.format = $("#node-input-format").val();
+            this.verify_source = $("#node-input-verify_source").is(":checked");
+            this.vectorize = parseInt($("#node-input-vectorize").val(), 10);
+            this.address_in = $("#node-input-address_in").val();
+            this.address_out = $("#node-input-address_out").val();
+            
+            try {
+                this.hooks = JSON.parse($("#node-input-hooks").val());
+            } catch (e) {
+                RED.notify("Invalid JSON format in hooks!", "error");
+                return false;
+            }
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="socket">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Node name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-layer"><i class="fa fa-layer-group"></i> Layer</label>
+        <select id="node-input-layer">
+            <option value="udp">UDP</option>
+            <option value="ip">IP</option>
+            <option value="eth">Ethernet</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-format"><i class="fa fa-cog"></i> Format</label>
+        <input type="text" id="node-input-format" placeholder="villas.human">
+    </div>
+    <div class="form-row">
+        <label for="node-input-verify_source"><i class="fa fa-check"></i> Verify Source</label>
+        <input type="checkbox" id="node-input-verify_source">
+    </div>
+    <div class="form-row">
+        <label for="node-input-vectorize"><i class="fa fa-cube"></i> Vectorize</label>
+        <input type="number" id="node-input-vectorize" min="1" value="1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-address_in"><i class="fa fa-sign-in-alt"></i> Input Address</label>
+        <input type="text" id="node-input-address_in" placeholder="127.0.0.1:12001">
+    </div>
+    <div class="form-row">
+        <label for="node-input-address_out"><i class="fa fa-sign-out-alt"></i> Output Address</label>
+        <input type="text" id="node-input-address_out" placeholder="127.0.0.1:12000">
+    </div>
+    <div class="form-row">
+        <label for="node-input-hooks"><i class="fa fa-wrench"></i> Hooks (JSON)</label>
+        <textarea id="node-input-hooks" placeholder='["print"]'></textarea>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="socket">
+    <p>This node sends and receives simulation data over a network using UDP, IP, or Ethernet layers.</p>
+    <ul>
+        <li><b>Name:</b> Node name</li>
+        <li><b>Layer:</b> Network layer (UDP, IP, Ethernet)</li>
+        <li><b>Format:</b> Data format (e.g., villas.human)</li>
+        <li><b>Verify Source:</b> Ensure source matches expected address</li>
+        <li><b>Vectorize:</b> Number of samples per message</li>
+        <li><b>Input Address:</b> Address for receiving data</li>
+        <li><b>Output Address:</b> Address for sending data</li>
+        <li><b>Hooks:</b> JSON array of hooks</li>
+    </ul>
+</script>

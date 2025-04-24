@@ -17,7 +17,14 @@
       "rms": "hooks/rms.js",
       "round": "hooks/round.js",
       "signal.v2-signal-config-in": "nodes/signal.v2-signal-config-in.js",
-      "signal.v2-signal-config-out": "nodes/signal.v2-signal-config-out.js"
+      "signal.v2-signal-config-out": "nodes/signal.v2-signal-config-out.js",
+      "villas-socket": "nodes/socket.js",
+      "villas-websocket": "nodes/websocket.js",
+      "villas-webrtc": "nodes/webrtc.js",
+      "mttq": "node/mttq.js", 
+      "influxdb": "node/influxdb.js",
+      "test-rtt": "nodes/test-rtt.js",
+      "average": "hooks/average.js"
     }
   },
   "dependencies": {
