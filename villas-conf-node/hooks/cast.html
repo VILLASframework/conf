@@ -1,0 +1,65 @@
+<script type="text/javascript">
+    RED.nodes.registerType('cast', {
+        category: 'Hooks',
+        color: '#B5EAD7', 
+        defaults: {
+            name: { value: "" },
+            new_type: { value: "", required: true },
+            new_name: { value: "" },
+            new_unit: { value: "" },
+            signals: { value: [], required: true, validate: function(v) { return Array.isArray(v) && v.length > 0; } },
+            enabled: { value: true },
+            priority: { value: 99 }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.svg",
+        label: function() {
+            return this.name || "cast";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="cast">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-new_type"><i class="fa fa-random"></i> New Type</label>
+        <select id="node-input-new_type">
+            <option value="integer">Integer</option>
+            <option value="float">Float</option>
+            <option value="boolean">Boolean</option>
+            <option value="complex">Complex</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-new_name"><i class="fa fa-pencil"></i> New Name</label>
+        <input type="text" id="node-input-new_name" placeholder="e.g. BusA.V">
+    </div>
+    <div class="form-row">
+        <label for="node-input-new_unit"><i class="fa fa-balance-scale"></i> New Unit</label>
+        <input type="text" id="node-input-new_unit" placeholder="e.g. V">
+    </div>
+    <div class="form-row">
+        <label for="node-input-signals"><i class="fa fa-random"></i> Signals (JSON array)</label>
+        <input type="text" id="node-input-signals" placeholder='["busA.V", "busB.V", "busC.V"]'>
+    </div>
+    <div class="form-row">
+        <label for="node-input-enabled"><i class="fa fa-toggle-on"></i> Enabled</label>
+        <input type="checkbox" id="node-input-enabled" checked>
+    </div>
+    <div class="form-row">
+        <label for="node-input-priority"><i class="fa fa-bolt"></i> Priority</label>
+        <input type="number" id="node-input-priority" placeholder="99">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="cast">
+    <p>This node casts the type of a signal and optionally sets a new name and unit for it.</p>
+    <p><b>New Type:</b> Target data type (integer, float, boolean, complex).</p>
+    <p><b>New Name:</b> Optional new signal name.</p>
+    <p><b>New Unit:</b> Optional new signal unit (e.g., V, A).</p>
+    <p><b>Signals:</b> A JSON array of signals to apply the cast to (e.g., ["busA.V", "busB.V"]).</p>
+</script>

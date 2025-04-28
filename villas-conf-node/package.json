@@ -11,20 +11,21 @@
   "node-red": {
     "nodes": {
       "config-start": "nodes/config-start.js",
-      "villas-file": "nodes/Villas-file.js",
       "config-end": "nodes/config-end.js",
       "signal": "nodes/signal.js",
-      "rms": "hooks/rms.js",
-      "round": "hooks/round.js",
       "signal.v2-signal-config-in": "nodes/signal.v2-signal-config-in.js",
       "signal.v2-signal-config-out": "nodes/signal.v2-signal-config-out.js",
-      "villas-socket": "nodes/socket.js",
-      "villas-websocket": "nodes/websocket.js",
-      "villas-webrtc": "nodes/webrtc.js",
-      "mttq": "node/mttq.js", 
-      "influxdb": "node/influxdb.js",
+      "villas-file": "nodes/villas-file.js",
+      "socket": "nodes/socket.js",
+      "websocket": "nodes/websocket.js",
+      "webrtc": "nodes/webrtc.js",
+      "mqtt": "nodes/mqtt.js",
+      "influxdb": "nodes/influxdb.js",
       "test-rtt": "nodes/test-rtt.js",
-      "average": "hooks/average.js"
+      "rms": "hooks/rms.js",
+      "round": "hooks/round.js",
+      "average" : "hooks/average.js",
+      "cast": "hooks/cast.js"
     }
   },
   "dependencies": {

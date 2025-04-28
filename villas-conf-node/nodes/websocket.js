@@ -3,26 +3,28 @@ module.exports = function (RED) {
         RED.nodes.createNode(this, config);
         const node = this;
 
-        console.log("WebSocket Node Loaded!");
-
         const builder = this.context().flow.get("builder");
+
+        const nodeConfig = {
+            format: config.format || "villas.human",
+            destinations: Array.isArray(config.destinations)
+                ? config.destinations
+                : (typeof config.destinations === 'string' ? config.destinations.split(',') : []),
+            in: {
+                signals: config.signals || [],
+                vectorize: parseInt(config.vectorize) || 1,
+                hooks: Array.isArray(config.hooks) ? config.hooks : []
+            },
+            out: {
+                vectorize: parseInt(config.out_vectorize) || 0,
+                hooks: Array.isArray(config.out_hooks) ? config.out_hooks : []
+            },
+            hooks: Array.isArray(config.hooks) ? config.hooks : ["print"],
+            builtin: config.builtin !== undefined ? config.builtin : true
+        };
 
         node.on("input", function (msg) {
             const wires = this.wires.flat();
-            const nodeConfig = {
-                format: config.format || "villas.human",
-                destinations: config.destinations ? config.destinations.split(",") : [],
-                in: {
-                    signals: config.signals || [],
-                    vectorize: config.vectorize !== undefined ? config.vectorize : 1,
-                    hooks: config.hooks || []
-                },
-                builtin: config.builtin !== undefined ? config.builtin : true,
-                out: {
-                    vectorize: config.out_vectorize !== undefined ? config.out_vectorize : 0,
-                    hooks: config.out_hooks || []
-                }
-            };
 
             builder.addNode(this.id, config.name, nodeConfig, wires);
 
@@ -34,6 +36,10 @@ module.exports = function (RED) {
             };
 
             node.send(msg);
+        });
+
+        node.on("close", function () {
+            node.log("WebSocket Node closed.");
         });
     }
 

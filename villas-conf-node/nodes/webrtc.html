@@ -1,0 +1,106 @@
+<script type="text/javascript">
+    RED.nodes.registerType('webrtc', {
+        category: 'network',
+        defaults: {
+            name: { value: "" },
+            session: { value: "my-session-name" },
+            server: { value: "wss://villas.k8s.eonerc.rwth-aachen.de/ws/signaling" },
+            format: { value: "villas.human" },
+            wait_seconds: { value: 0 },
+            ordered: { value: false },
+            max_retransmits: { value: 0 },
+            ice_servers: { value: [] },
+            hooks: { value: ["print"] },
+            builtin: { value: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        color: "#a6bbcf",
+        icon: "file.svg",
+        label: function() {
+            return this.name || "webrtc";
+        },
+        oneditprepare: function() {
+            $("#node-input-name").val(this.name);
+            $("#node-input-session").val(this.session);
+            $("#node-input-server").val(this.server);
+            $("#node-input-format").val(this.format);
+            $("#node-input-wait_seconds").val(this.wait_seconds);
+            $("#node-input-ordered").prop("checked", this.ordered);
+            $("#node-input-max_retransmits").val(this.max_retransmits);
+            $("#node-input-ice_servers").val(this.ice_servers.join(", "));
+            $("#node-input-hooks").val(JSON.stringify(this.hooks, null, 2));
+        },
+        oneditsave: function() {
+            this.name = $("#node-input-name").val();
+            this.session = $("#node-input-session").val();
+            this.server = $("#node-input-server").val();
+            this.format = $("#node-input-format").val();
+            this.wait_seconds = parseInt($("#node-input-wait_seconds").val(), 10);
+            this.ordered = $("#node-input-ordered").prop("checked");
+            this.max_retransmits = parseInt($("#node-input-max_retransmits").val(), 10);
+            this.ice_servers = $("#node-input-ice_servers").val().split(",").map(s => s.trim());
+
+            try {
+                this.hooks = JSON.parse($("#node-input-hooks").val());
+            } catch (e) {
+                RED.notify("Invalid JSON format in hooks!", "error");
+                return false;
+            }
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="webrtc">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Node name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-session"><i class="fa fa-key"></i> Session</label>
+        <input type="text" id="node-input-session" placeholder="Session ID">
+    </div>
+    <div class="form-row">
+        <label for="node-input-server"><i class="fa fa-link"></i> Signaling Server</label>
+        <input type="text" id="node-input-server" placeholder="Signaling Server URL">
+    </div>
+    <div class="form-row">
+        <label for="node-input-format"><i class="fa fa-cog"></i> Format</label>
+        <input type="text" id="node-input-format" placeholder="villas.human">
+    </div>
+    <div class="form-row">
+        <label for="node-input-wait_seconds"><i class="fa fa-clock"></i> Wait Seconds</label>
+        <input type="number" id="node-input-wait_seconds" placeholder="0">
+    </div>
+    <div class="form-row">
+        <label for="node-input-ordered"><i class="fa fa-sort"></i> Ordered</label>
+        <input type="checkbox" id="node-input-ordered">
+    </div>
+    <div class="form-row">
+        <label for="node-input-max_retransmits"><i class="fa fa-exchange"></i> Max Retransmits</label>
+        <input type="number" id="node-input-max_retransmits" placeholder="0">
+    </div>
+    <div class="form-row">
+        <label for="node-input-ice_servers"><i class="fa fa-server"></i> ICE Servers</label>
+        <input type="text" id="node-input-ice_servers" placeholder="stun:stun.0l.de:3478">
+    </div>
+    <div class="form-row">
+        <label for="node-input-hooks"><i class="fa fa-wrench"></i> Hooks (JSON)</label>
+        <textarea id="node-input-hooks" placeholder='["print", {"type": "limit_rate", "rate": 1000}]'></textarea>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="villas-webrtc">
+    <p>This node allows WebRTC communication in Node-RED for VILLASnode.</p>
+    <p>
+        <b>Name:</b> Name of the node.<br>
+        <b>Session:</b> Unique session identifier shared between nodes.<br>
+        <b>Signaling Server:</b> WebSocket signaling server URL.<br>
+        <b>Format:</b> Data format (e.g., "villas.human").<br>
+        <b>Wait Seconds:</b> Delay before connecting.<br>
+        <b>Ordered:</b> Whether to enforce ordered data delivery.<br>
+        <b>Max Retransmits:</b> Number of retries for undelivered messages.<br>
+        <b>ICE Servers:</b> List of STUN/TURN servers.<br>
+        <b>Hooks:</b> Array of hooks in JSON format.<br>
+    </p>
+</script>
