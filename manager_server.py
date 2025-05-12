@@ -22,12 +22,13 @@ started_container_info = {}
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DOCKERFILE_PATH = os.path.join(BASE_DIR, 'Dockerfile')
+CONFIG_FILE = os.path.join(BASE_DIR, 'haproxy.cfg')
 
 
-def validate_haproxy_config(config_file):
+def validate_haproxy_config(CONFIG_FILE):
     """Validates the HAProxy configuration file."""
     try:
-        subprocess.run(['sudo', 'haproxy', '-f', config_file, '-c'], check=True)
+        subprocess.run(['sudo', 'haproxy', '-f', CONFIG_FILE, '-c'], check=True)
         return True
     except subprocess.CalledProcessError:
         print("The configuration file contains errors.")
@@ -56,9 +57,9 @@ def build_docker_image():
 
 def add_servers_to_backend(backend_name, servers):
     """Adds multiple new servers to a backend in the HAProxy config file."""
-    config_file = '/etc/haproxy/haproxy.cfg'
+    
     temp_file = '/tmp/haproxy.cfg'
-    with open(config_file, 'r') as file:
+    with open(CONFIG_FILE, 'r') as file:
         lines = file.readlines()
 
     new_lines = []
@@ -87,7 +88,7 @@ def add_servers_to_backend(backend_name, servers):
         return
 
     try:
-        subprocess.run(['sudo', 'mv', temp_file, config_file], check=True)
+        subprocess.run(['sudo', 'mv', temp_file, CONFIG_FILE], check=True)
         subprocess.run(['sudo', 'systemctl', 'restart', 'haproxy'], check=True)
         print(f"Servers added to backend {backend_name} and HAProxy restarted.")
     except subprocess.CalledProcessError:
@@ -95,9 +96,9 @@ def add_servers_to_backend(backend_name, servers):
 
 def remove_server_from_backend(backend_name, server_name):
     """Removes a server from a backend in the HAProxy config file."""
-    config_file = '/etc/haproxy/haproxy.cfg'
+    
 
-    with open(config_file, 'r') as file:
+    with open(CONFIG_FILE, 'r') as file:
         lines = file.readlines()
 
     new_lines = []
@@ -119,18 +120,18 @@ def remove_server_from_backend(backend_name, server_name):
         return
 
     try:
-        subprocess.run(['sudo', 'mv', '/tmp/haproxy.cfg', config_file], check=True)
+        subprocess.run(['sudo', 'mv', '/tmp/haproxy.cfg', CONFIG_FILE], check=True)
         subprocess.run(['sudo', 'systemctl', 'restart', 'haproxy'], check=True)
         print(f"Server {server_name} removed from backend {backend_name} and HAProxy restarted.")
     except subprocess.CalledProcessError:
         print("Error moving the temporary config file.")
 
-def get_backends(config_file):
+def get_backends(CONFIG_FILE):
     """Returns a dictionary of all backends and their servers."""
     backends = {}
     current_backend = None
 
-    with open(config_file, 'r') as file:
+    with open(CONFIG_FILE, 'r') as file:
         lines = file.readlines()
     
     backend_start = False
