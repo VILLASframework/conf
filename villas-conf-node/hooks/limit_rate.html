@@ -1,0 +1,58 @@
+<script type="text/javascript">
+  RED.nodes.registerType("limit_rate", {
+    category: "Hooks",
+    color: "#FFABAB",
+    defaults: {
+      hooktype: { value: "limit_rate", required: true },
+      "villas-type": { value: "limit_rate", required: true },
+      "villas-rate": { value: 5, required: true },
+      "villas-mode": { value: "local", required: true },
+      "villas-enabled": { value: true },
+      "villas-priority": { value: 99 },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "file.svg",
+    label: function () {
+      return "limit_rate";
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="limit_rate">
+  <div class="form-row">
+    <label for="node-input-villas-type"><i class="fa fa-tag"></i> Type</label>
+    <input type="text" id="node-input-villas-type" value="limit_rate" readonly />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-rate">Rate (1/s)</label>
+    <input type="number" id="node-input-villas-rate" min="0" step="0.1" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-mode">Mode</label>
+    <select id="node-input-villas-mode">
+      <option value="local">local</option>
+      <option value="received">received</option>
+      <option value="origin">origin</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-enabled">Enabled</label>
+    <input type="checkbox" id="node-input-villas-enabled" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-priority">Priority</label>
+    <input type="number" id="node-input-villas-priority" value="99" />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="limit_rate">
+  <p>
+    This hook discards incoming samples to enforce a maximum sample rate based on timestamps.
+    You can choose which timestamp field to base the rate limiting on: local, received, or origin.
+  </p>
+</script>

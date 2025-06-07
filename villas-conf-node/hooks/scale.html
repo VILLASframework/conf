@@ -1,0 +1,55 @@
+<script type="text/javascript">
+    RED.nodes.registerType('scale', {
+        category: 'Hooks',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "" },
+            gain: { value: 1.0, required: true },
+            offset: { value: 0.0 },
+            signals: { value: "", required: true },
+            enabled: { value: true },
+            priority: { value: 99 }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.svg",
+        label: function () {
+            return this.name || "scale";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="scale">
+    <div class="form-row">
+        <label>Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label>Gain (Scale)</label>
+        <input type="number" id="node-input-gain" step="any">
+    </div>
+    <div class="form-row">
+        <label>Offset</label>
+        <input type="number" id="node-input-offset" step="any">
+    </div>
+    <div class="form-row">
+        <label>Signals</label>
+        <input type="text" id="node-input-signals" placeholder="e.g. busA.V,busB.V">
+    </div>
+    <div class="form-row">
+        <label>Enabled</label>
+        <input type="checkbox" id="node-input-enabled">
+    </div>
+    <div class="form-row">
+        <label>Priority</label>
+        <input type="number" id="node-input-priority">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="scale">
+    <p>
+        The <code>scale</code> hook multiplies signal values by a gain factor and adds an optional offset.
+        <br/>
+        Example: <code>value = value * gain + offset</code>
+    </p>
+</script>

@@ -1,0 +1,47 @@
+<script type="text/javascript">
+  RED.nodes.registerType("dump", {
+    category: "Hooks",
+    color: "#B5EAD7",
+    defaults: {
+      hooktype: { value: "dump", required: true },
+      "villas-type": { value: "dump", required: true },
+      "villas-enabled": { value: true },
+      "villas-priority": { value: 99 },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "file.svg",
+    label: function () {
+      return "dump";
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="dump">
+  <div class="form-row">
+    <label for="node-input-villas-type"><i class="fa fa-tag"></i> Type</label>
+    <input type="text" id="node-input-villas-type" value="dump" readonly />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-enabled">Enabled</label>
+    <input type="checkbox" id="node-input-villas-enabled" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-priority">Priority</label>
+    <input
+      type="number"
+      id="node-input-villas-priority"
+      placeholder="99"
+      value="99"
+    />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="dump">
+  <p>
+    This hook prints each sample’s data to standard output using the internal logger.
+    It is useful for debugging or inspecting signal flow in a path.
+  </p>
+</script>

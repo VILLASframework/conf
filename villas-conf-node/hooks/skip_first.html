@@ -1,0 +1,50 @@
+<script type="text/javascript">
+    RED.nodes.registerType('skip_first', {
+        category: 'Hooks',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "" },
+            samples: { value: 0 },
+            seconds: { value: 0.0 },
+            enabled: { value: true },
+            priority: { value: 99 }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.svg",
+        label: function () {
+            return this.name || "skip_first";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="skip_first">
+    <div class="form-row">
+        <label>Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label>Samples to skip</label>
+        <input type="number" id="node-input-samples" placeholder="e.g. 100">
+    </div>
+    <div class="form-row">
+        <label>Seconds to skip</label>
+        <input type="number" id="node-input-seconds" step="any" placeholder="e.g. 1.5">
+    </div>
+    <div class="form-row">
+        <label>Enabled</label>
+        <input type="checkbox" id="node-input-enabled">
+    </div>
+    <div class="form-row">
+        <label>Priority</label>
+        <input type="number" id="node-input-priority">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="skip_first">
+    <p>
+        The <code>skip_first</code> hook drops a number of initial samples or a time span (in seconds) after a simulation starts or restarts.
+        <br/><br/>
+        You can specify either <strong>samples</strong> or <strong>seconds</strong> — both optional, but at least one should be set to a value greater than zero.
+    </p>
+</script>

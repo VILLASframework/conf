@@ -1,0 +1,67 @@
+<script type="text/javascript">
+  RED.nodes.registerType("decimate", {
+    category: "Hooks",
+    color: "#FFDAC1",
+    defaults: {
+      hooktype: { value: "decimate", required: true },
+      "villas-type": { value: "decimate", required: true },
+      "villas-ratio": { value: 4, required: true },
+      "villas-enabled": { value: true },
+      "villas-priority": { value: 99 },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "file.svg",
+    label: function () {
+      return "decimate";
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="decimate">
+  <div class="form-row">
+    <label for="node-input-villas-type"><i class="fa fa-tag"></i> Type</label>
+    <input
+      type="text"
+      id="node-input-villas-type"
+      placeholder="Type"
+      value="decimate"
+      readonly
+    />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-ratio">Ratio</label>
+    <input
+      type="number"
+      name="node-input-villas-ratio"
+      id="node-input-villas-ratio"
+      value="4"
+      min="1"
+    />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-enabled">Enabled</label>
+    <input
+      type="checkbox"
+      name="node-input-villas-enabled"
+      id="node-input-villas-enabled"
+    />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-priority">Priority</label>
+    <input
+      type="number"
+      name="node-input-villas-priority"
+      id="node-input-villas-priority"
+      placeholder="99"
+      value="99"
+    />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="decimate">
+  <p>Reduces the sampling rate by periodically discarding samples. A ratio of N will keep only every Nth sample.</p>
+</script>

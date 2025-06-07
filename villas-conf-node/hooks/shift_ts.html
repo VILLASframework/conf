@@ -1,0 +1,53 @@
+<script type="text/javascript">
+    RED.nodes.registerType('shift_ts', {
+        category: 'Hooks',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "" },
+            mode: { value: "origin", required: true },
+            offset: { value: 0.0, required: true },
+            enabled: { value: true },
+            priority: { value: 99 }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.svg",
+        label: function () {
+            return this.name || "shift_ts";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="shift_ts">
+    <div class="form-row">
+        <label>Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label>Mode</label>
+        <select id="node-input-mode">
+            <option value="origin">origin</option>
+            <option value="received">received</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label>Offset (seconds)</label>
+        <input type="number" id="node-input-offset" step="any" placeholder="e.g. 5.5">
+    </div>
+    <div class="form-row">
+        <label>Enabled</label>
+        <input type="checkbox" id="node-input-enabled">
+    </div>
+    <div class="form-row">
+        <label>Priority</label>
+        <input type="number" id="node-input-priority">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="shift_ts">
+    <p>
+        The <code>shift_ts</code> hook adds a fixed offset (in seconds) to the selected timestamp field of each sample.
+        <br/>
+        Use this to simulate time delays or synchronize streams.
+    </p>
+</script>

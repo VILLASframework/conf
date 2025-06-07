@@ -1,0 +1,44 @@
+<script type="text/javascript">
+    RED.nodes.registerType('shift_seq', {
+        category: 'Hooks',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "" },
+            offset: { value: 0, required: true },
+            enabled: { value: true },
+            priority: { value: 99 }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.svg",
+        label: function () {
+            return this.name || "shift_seq";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="shift_seq">
+    <div class="form-row">
+        <label>Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label>Offset</label>
+        <input type="number" id="node-input-offset" placeholder="e.g. 10">
+    </div>
+    <div class="form-row">
+        <label>Enabled</label>
+        <input type="checkbox" id="node-input-enabled">
+    </div>
+    <div class="form-row">
+        <label>Priority</label>
+        <input type="number" id="node-input-priority">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="shift_seq">
+    <p>
+        The <code>shift_seq</code> hook adds an offset to the sequence number of each sample.
+        This can be used to synchronize or align sequence numbers across data sources.
+    </p>
+</script>

@@ -1,0 +1,47 @@
+<script type="text/javascript">
+  RED.nodes.registerType("drop", {
+    category: "Hooks",
+    color: "#F5F5F5",
+    defaults: {
+      hooktype: { value: "drop", required: true },
+      "villas-type": { value: "drop", required: true },
+      "villas-enabled": { value: true },
+      "villas-priority": { value: 99 },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "file.svg",
+    label: function () {
+      return "drop";
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="drop">
+  <div class="form-row">
+    <label for="node-input-villas-type"><i class="fa fa-tag"></i> Type</label>
+    <input type="text" id="node-input-villas-type" value="drop" readonly />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-enabled">Enabled</label>
+    <input type="checkbox" id="node-input-villas-enabled" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-priority">Priority</label>
+    <input
+      type="number"
+      id="node-input-villas-priority"
+      placeholder="99"
+      value="99"
+    />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="drop">
+  <p>
+    This hook discards samples received out of order based on their sequence number.
+    It is useful to prevent reprocessing or feedback loops in time series.
+  </p>
+</script>

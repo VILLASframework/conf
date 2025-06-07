@@ -1,0 +1,48 @@
+<script type="text/javascript">
+  RED.nodes.registerType("jitter_calc", {
+    category: "Hooks",
+    color: "#FFD6A5",
+    defaults: {
+      hooktype: { value: "jitter_calc", required: true },
+      "villas-type": { value: "jitter_calc", required: true },
+      "villas-enabled": { value: true },
+      "villas-priority": { value: 99 },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "file.svg",
+    label: function () {
+      return "jitter_calc";
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="jitter_calc">
+  <div class="form-row">
+    <label for="node-input-villas-type"><i class="fa fa-tag"></i> Type</label>
+    <input type="text" id="node-input-villas-type" value="jitter_calc" readonly />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-enabled">Enabled</label>
+    <input type="checkbox" id="node-input-villas-enabled" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-priority">Priority</label>
+    <input
+      type="number"
+      id="node-input-villas-priority"
+      placeholder="99"
+      value="99"
+    />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="jitter_calc">
+  <p>
+    This hook calculates jitter, moving average, and variance based on timestamps,
+    comparing GPS timestamps (origin) and local NTP (received) according to RFC3550 (like in Wireshark).
+    Useful for timestamp accuracy evaluation and network diagnostics.
+  </p>
+</script>

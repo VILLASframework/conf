@@ -1,0 +1,170 @@
+<script type="text/javascript">
+  RED.nodes.registerType("dp", {
+    category: "Hooks",
+    color: "#FFB7B2",
+    defaults: {
+      hooktype: { value: "dp", required: true },
+      "villas-type": { value: "dp", required: true },
+      "villas-signal": { value: "busA.V", required: true },
+      "villas-f0": { value: 50, required: true },
+      "villas-dt": { value: 0.00005 },
+      "villas-rate": { value: null },
+      "villas-inverse": { value: false },
+      "villas-harmonicsEncoded": { value: "" },
+      "villas-harmonicsTemplate": { value: "", type: "signal-config" },
+      "villas-enabled": { value: true },
+      "villas-priority": { value: 99 },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "file.svg",
+    label: function () {
+      return "dp";
+    },
+    oneditsave: function () {
+      const saveArray = (name) => {
+        const items = $(`.array-${name} .form-subrow`).children();
+        let values = [];
+
+        for (const item of items) {
+          const input = $(item).find(":input").first();
+          const value = input.val();
+          if (value !== undefined && value !== "" && value !== "_ADD_") {
+            values.push(parseInt(value));
+          }
+        }
+
+        $(`.array-${name} .array-encoded`)
+          .first()
+          .val(JSON.stringify({ values: values, type: "INPUT" }));
+      };
+
+      saveArray("villas-harmonics");
+    },
+    oneditprepare: function () {
+      const arrayConfigurator = (name) => {
+        const addItem = (val = "") => {
+          const template = $(`.array-template-${name}Template`).clone(true);
+          const input = template.find(":input").first();
+          const label = template.find("label").first();
+          const rowId = crypto.randomUUID();
+
+          input.attr("id", `array-input-${rowId}`);
+          label.attr("for", `array-input-${rowId}`);
+          input.val(val);
+
+          input.on("change", () => {
+            const lastVal = $(`.array-${name} .form-subrow div`)
+              .last()
+              .find(":input")
+              .val();
+            if (lastVal !== "" && lastVal !== "_ADD_") {
+              addItem("_ADD_");
+            }
+          });
+
+          $(`.array-${name} .form-subrow`).append(template);
+        };
+
+        const encoded = $(`.array-${name} .array-encoded`).val();
+        if (encoded) {
+          try {
+            const decoded = JSON.parse(encoded);
+            if (Array.isArray(decoded.values)) {
+              decoded.values.forEach((v) => addItem(v));
+            }
+          } catch (e) {
+            console.error("Invalid encoded array", e);
+          }
+        }
+
+        addItem("_ADD_");
+      };
+
+      arrayConfigurator("villas-harmonics");
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="dp">
+  <div class="form-row">
+    <label for="node-input-villas-type"><i class="fa fa-tag"></i> Type</label>
+    <input type="text" id="node-input-villas-type" value="dp" readonly />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-signal">Signal</label>
+    <input type="text" id="node-input-villas-signal" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-f0">Fundamental frequency (f0)</label>
+    <input type="number" id="node-input-villas-f0" step="0.01" min="0" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-dt">Timestep (dt)</label>
+    <input type="number" id="node-input-villas-dt" step="0.00001" min="0" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-rate">Rate (Hz)</label>
+    <input type="number" id="node-input-villas-rate" step="1" min="0" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-inverse">Inverse</label>
+    <input type="checkbox" id="node-input-villas-inverse" />
+  </div>
+
+  <div class="form-row array array-villas-harmonics">
+    <input
+      type="text"
+      class="array-encoded"
+      id="node-input-villas-harmonicsEncoded"
+    />
+    <div class="array-template-villas-harmonics array-template">
+      <label for="node-template-villas-harmonicsTemplate"></label>
+      <input
+        type="number"
+        id="node-input-villas-harmonicsTemplate"
+        placeholder="_ADD_"
+      />
+    </div>
+    <div class="form-subrow"></div>
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-enabled">Enabled</label>
+    <input type="checkbox" id="node-input-villas-enabled" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-priority">Priority</label>
+    <input
+      type="number"
+      id="node-input-villas-priority"
+      value="99"
+      placeholder="99"
+    />
+  </div>
+</script>
+
+<style>
+  .array-encoded {
+    display: none !important;
+  }
+  .array-template {
+    display: none;
+  }
+  .form-row .form-subrow {
+    padding-left: 3px;
+  }
+</style>
+
+<script type="text/html" data-help-name="dp">
+  <p>
+    Calculates dynamic phasors from a signal using DFT. You must set a
+    fundamental frequency (f0), a timestep or rate, and at least one harmonic.
+  </p>
+</script>

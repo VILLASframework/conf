@@ -1,0 +1,47 @@
+<script type="text/javascript">
+  RED.nodes.registerType("fix", {
+    category: "Hooks",
+    color: "#E2F0CB",
+    defaults: {
+      hooktype: { value: "fix", required: true },
+      "villas-type": { value: "fix", required: true },
+      "villas-enabled": { value: true },
+      "villas-priority": { value: 99 },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "file.svg",
+    label: function () {
+      return "fix";
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="fix">
+  <div class="form-row">
+    <label for="node-input-villas-type"><i class="fa fa-tag"></i> Type</label>
+    <input type="text" id="node-input-villas-type" value="fix" readonly />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-enabled">Enabled</label>
+    <input type="checkbox" id="node-input-villas-enabled" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-priority">Priority</label>
+    <input
+      type="number"
+      id="node-input-villas-priority"
+      placeholder="99"
+      value="99"
+    />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="fix">
+  <p>
+    The <strong>fix</strong> hook adds missing metadata to samples such as:
+    sequence number, received timestamp, and origin timestamp. It ensures all samples are complete.
+  </p>
+</script>

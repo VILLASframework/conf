@@ -1,0 +1,127 @@
+<script type="text/javascript">
+  RED.nodes.registerType("ebm", {
+    category: "Hooks",
+    color: "#D5AAFF",
+    defaults: {
+      hooktype: { value: "ebm", required: true },
+      "villas-type": { value: "ebm", required: true },
+      "villas-phasesEncoded": { value: "" },
+      "villas-phasesTemplate": { value: "" },
+      "villas-enabled": { value: true },
+      "villas-priority": { value: 99 },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "file.svg",
+    label: function () {
+      return "ebm";
+    },
+    oneditsave: function () {
+      const items = $(".array-ebm-phases .form-subrow").children();
+      const values = [];
+
+      for (const item of items) {
+        const inputs = $(item).find(":input");
+        const val1 = parseInt(inputs[0].value);
+        const val2 = parseInt(inputs[1].value);
+        if (!isNaN(val1) && !isNaN(val2)) {
+          values.push([val1, val2]);
+        }
+      }
+
+      $(".array-ebm-phases .array-encoded")
+        .first()
+        .val(JSON.stringify({ values }));
+    },
+    oneditprepare: function () {
+      const encoded = $(".array-ebm-phases .array-encoded").val();
+      const formSubrow = $(".array-ebm-phases .form-subrow");
+      const addItem = (val1 = "", val2 = "") => {
+        const template = $(".array-template-ebm-phasesTemplate").clone(true);
+        const inputs = template.find(":input");
+
+        inputs.eq(0).val(val1);
+        inputs.eq(1).val(val2);
+
+        formSubrow.append(template);
+      };
+
+      if (encoded) {
+        try {
+          const decoded = JSON.parse(encoded);
+          if (decoded.values && Array.isArray(decoded.values)) {
+            for (const [v1, v2] of decoded.values) {
+              addItem(v1, v2);
+            }
+          }
+        } catch (e) {
+          console.error("Invalid encoded EBM array:", e);
+        }
+      }
+
+      // Always add one blank for adding
+      addItem();
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="ebm">
+  <div class="form-row">
+    <label for="node-input-villas-type"><i class="fa fa-tag"></i> Type</label>
+    <input type="text" id="node-input-villas-type" value="ebm" readonly />
+  </div>
+
+  <div class="form-row array array-ebm-phases">
+    <input
+      type="text"
+      class="array-encoded"
+      id="node-input-villas-phasesEncoded"
+    />
+    <div class="array-template-ebm-phasesTemplate array-template">
+      <label>Phase pair:</label>
+      <input type="number" placeholder="Voltage index" />
+      <input type="number" placeholder="Current index" />
+    </div>
+    <div class="form-subrow"></div>
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-enabled">Enabled</label>
+    <input type="checkbox" id="node-input-villas-enabled" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-priority">Priority</label>
+    <input
+      type="number"
+      id="node-input-villas-priority"
+      placeholder="99"
+      value="99"
+    />
+  </div>
+</script>
+
+<style>
+  .array-encoded {
+    display: none !important;
+  }
+
+  .array-template {
+    display: none;
+  }
+
+  .form-row .form-subrow {
+    padding-left: 3px;
+  }
+
+  .array-template input {
+    margin-right: 5px;
+  }
+</style>
+
+<script type="text/html" data-help-name="ebm">
+  <p>
+    Calculates energy by integrating power over time between voltage-current phase pairs.
+    Useful for time-series based energy evaluation in simulation or monitoring.
+  </p>
+</script>
