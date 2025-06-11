@@ -1,47 +1,102 @@
 # VILLASconf
 
-This is a noed-red based config file generator for VILLASnode configurations.
+**VILLASconf** is a Node-RED-based tool for graphical creation and management of VILLASnode configuration files.
 
+---
 
-## Notes
+## 📦 Installation
 
-Download to file:
+### Clone the repository
 
+```bash
+git clone https://git-ce.rwth-aachen.de/acs/private/research/target-x/villasconf.git
 ```
-npm install --production node-red-contrib-downloadfile
+
+### Project structure (example)
+
+```bash
+villasconf/
+├── villas-conf-node/
+│   ├── nodes/
+│   └── package.json
+├── Dockerfile
+├── settings.js
+└── README.md
 ```
 
-You have to create a containterData folder in the root directory to store the data files
+---
 
-### Install nodes
-Currently the custom node needs to be installed by hand
+## 🐳 Docker-based Execution
 
-- Connect to container
-- run `npm i /villas-conf-node`
+### Start Node-RED with VILLASconf:
 
-
-### Run with nodemon
-
-This is only working within the devel system since there nodemon is installed via Dockerfile
-
+```bash
+docker run -d \
+  --name VILLAS \
+  -p 1880:1880 \
+  -v $(pwd)/data:/data \
+  nodered/node-red:3.1.0
 ```
+
+---
+
+## ⚙️ Development & Custom Nodes
+
+### Create a new Node
+
+Create two files inside the `villas-conf-node/nodes` directory:
+
+```bash
+villasconf/villas-conf-node/nodes/
+├── MyNode.js
+├── MyNode.html
+```
+
+### Add the new node to `package.json`:
+
+```json
+"node-red": {
+  "nodes": {
+    "MyNode": "nodes/MyNode.js"
+  }
+}
+```
+
+### Install the node (locally or inside the container):
+
+```bash
+npm install ./villas-conf-node
+```
+
+### Restart the Node-RED container:
+
+```bash
+docker restart <container ID>
+```
+
+---
+
+## 🔧 Development with nodemon (optional)
+
+In a development setup using a Dockerfile that includes `nodemon`, you can start Node-RED like this:
+
+```bash
 /usr/src/node-red/node_modules/.bin/nodemon $NODE_OPTIONS node_modules/node-red/red.js --userDir /data $FLOWS "${@}"
 ```
 
-### Rebuild with updated dockerfile
+---
 
-```
+## ↻ Rebuild the Image
+
+If you've made changes to the Dockerfile or the nodes:
+
+```bash
 docker compose build --no-cache
 ```
 
+---
 
-## Usage
+## 📝 License
 
-###Run VILLASnode
-
-```
-docker run --volume ./example_conf/example.json:/config.json --privileged registry.git.rwth-aachen.de/acs/public/villas/node node /config.json
-```
-
-
-## License
+MIT License
+(c) RWTH Aachen / ACS
