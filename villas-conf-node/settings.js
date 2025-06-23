@@ -32,7 +32,7 @@ module.exports = {
  ******************************************************************************/
 
     /** The file containing the flows. If not set, defaults to flows_<hostname>.json **/
-    flowFile: 'flows.json',
+    flowFile: 'Villas.config',
 
     /** By default, credentials are encrypted in storage using a generated key. To
      * specify your own secret, set the following property.
@@ -361,7 +361,7 @@ module.exports = {
  *  - disableEditor
  *  - editorTheme
  ******************************************************************************/
-
+httpStatic: "./public",
     /** The following property can be used to disable the editor. The admin API
      * is not affected by this option. To disable both the editor and the admin
      * API, use either the httpRoot or httpAdminRoot properties
@@ -383,7 +383,9 @@ module.exports = {
          * time you access the editor for each release of Node-RED, set this to false
          */
         //tours: false,
-
+        page: {
+            scripts: ["/editor/export.js"]
+        },
         palette: {
             /** The following property can be used to order the categories in the editor
              * palette. If a node's category is not in the list, the category will get
@@ -391,6 +393,9 @@ module.exports = {
              * If not set, the following default order is used:
              */
             //categories: ['subflows', 'common', 'function', 'network', 'sequence', 'parser', 'storage'],
+            nodes: {
+                "@node-red/nodes/core": false
+            }
         },
 
         projects: {
@@ -483,6 +488,12 @@ module.exports = {
         // os:require('os'),
     },
 
+    nodesExcludes: [
+    "@node-red/nodes/**",      // alle core nodes
+    "node-red/**",             // legacy core pfade
+    "**/*.js"   
+    ],
+
     /** The maximum number of messages nodes will buffer internally as part of their
      * operation. This applies across a range of nodes that operate on message sequences.
      * defaults to no limit. A value of 0 also means no limit is applied.
@@ -557,4 +568,5 @@ module.exports = {
     //    *   - reason: if result is false, the HTTP reason string to return
     //    */
     //},
+   
 }
