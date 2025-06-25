@@ -26,19 +26,30 @@ villasconf/
 
 ---
 
+## 🛠️ Docker Image
+
+Before running the container, make sure to build the Docker image.
+
+Use the provided `Dockerfile` (in this project folder) to build a custom image with the VILLASconf:
+
+```bash
+docker build -t my-villas-image .
+```
+
+
 ## 🐳 Docker-based Execution
 
-### Start Node-RED with VILLASconf:
+### Start Node-RED with VILLASconf
+
+After building the image, you can start the container using:
 
 ```bash
 docker run -d \
-  --name VILLAS \
+  --name villas-nodered \
   -p 1880:1880 \
   -v $(pwd)/data:/data \
-  nodered/node-red:3.1.0
+  my-villas-image
 ```
-
----
 
 ## ⚙️ Development & Custom Nodes
 
