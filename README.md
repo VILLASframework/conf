@@ -97,16 +97,6 @@ In a development setup using a Dockerfile that includes `nodemon`, you can start
 
 ---
 
-## ↻ Rebuild the Image
-
-If you've made changes to the Dockerfile or the nodes:
-
-```bash
-docker compose build --no-cache
-```
-
----
-
 ## 📝 License
 
 MIT License
