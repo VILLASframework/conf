@@ -1,0 +1,135 @@
+<script type="text/javascript">
+  RED.nodes.registerType("lua", {
+    category: "Hooks",
+    color: "#C1C8E4",
+    defaults: {
+      hooktype: { value: "lua", required: true },
+      "villas-type": { value: "lua", required: true },
+      "villas-use_names": { value: true },
+      "villas-script": { value: "", required: true },
+      "villas-signalsEncoded": { value: "" },
+      "villas-signalsTemplate": { value: "", type: "signal-config" },
+      "villas-enabled": { value: true },
+      "villas-priority": { value: 99 },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "file.svg",
+    label: function () {
+      return "lua";
+    },
+    oneditsave: function () {
+      const items = $(`.array-villas-signals .form-subrow`).children();
+      const values = [];
+
+      for (const item of items) {
+        const input = $(item).find(":input").first();
+        const value = input.val();
+        if (value) values.push(value);
+      }
+
+      $(".array-villas-signals .array-encoded")
+        .first()
+        .val(JSON.stringify({ values }));
+    },
+    oneditprepare: function () {
+      const arrayConfigurator = () => {
+        const addItem = (val = "") => {
+          const template = $(".array-template-villas-signalsTemplate").clone(true);
+          const input = template.find(":input").first();
+          const label = template.find("label").first();
+          const rowId = crypto.randomUUID();
+
+          input.attr("id", `array-input-${rowId}`);
+          label.attr("for", `array-input-${rowId}`);
+          input.val(val);
+
+          $(".array-villas-signals .form-subrow").append(template);
+        };
+
+        const encoded = $(".array-villas-signals .array-encoded").val();
+        if (encoded) {
+          try {
+            const decoded = JSON.parse(encoded);
+            if (Array.isArray(decoded.values)) {
+              decoded.values.forEach((v) => addItem(v));
+            }
+          } catch (e) {
+            console.error("Invalid encoded array:", e);
+          }
+        }
+
+        addItem();
+      };
+
+      arrayConfigurator();
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="lua">
+  <div class="form-row">
+    <label for="node-input-villas-type"><i class="fa fa-tag"></i> Type</label>
+    <input type="text" id="node-input-villas-type" value="lua" readonly />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-script">Script Path</label>
+    <input type="text" id="node-input-villas-script" placeholder="e.g. ../lua/hooks/test.lua" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-use_names">Use Signal Names</label>
+    <input type="checkbox" id="node-input-villas-use_names" />
+  </div>
+
+  <div class="form-row array array-villas-signals">
+    <input
+      type="text"
+      class="array-encoded"
+      id="node-input-villas-signalsEncoded"
+    />
+    <div class="array-template-villas-signalsTemplate array-template">
+      <label for="node-input-villas-signalsTemplate"></label>
+      <input
+        type="text"
+        id="node-input-villas-signalsTemplate"
+        placeholder="expression"
+      />
+    </div>
+    <div class="form-subrow"></div>
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-enabled">Enabled</label>
+    <input type="checkbox" id="node-input-villas-enabled" />
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-villas-priority">Priority</label>
+    <input type="number" id="node-input-villas-priority" value="99" />
+  </div>
+</script>
+
+<style>
+  .array-encoded {
+    display: none !important;
+  }
+
+  .array-template {
+    display: none;
+  }
+
+  .form-row .form-subrow {
+    padding-left: 3px;
+  }
+</style>
+
+<script type="text/html" data-help-name="lua">
+  <p>
+    This hook evaluates Lua scripts to manipulate signal data dynamically.
+    You can define your own <code>prepare()</code>, <code>start()</code>,
+    <code>process()</code>, <code>periodic()</code>, and more in a Lua script file.
+    Signal values can be updated inline or new signals generated via Lua expressions.
+  </p>
+</script>

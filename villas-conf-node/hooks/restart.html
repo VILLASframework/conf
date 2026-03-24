@@ -1,0 +1,41 @@
+<script type="text/javascript">
+    RED.nodes.registerType('restart', {
+        category: 'Hooks',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "" },
+            enabled: { value: true },
+            priority: { value: 99 }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.svg",
+        label: function () {
+            return this.name || "restart";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="restart">
+    <div class="form-row">
+        <label>Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label>Enabled</label>
+        <input type="checkbox" id="node-input-enabled">
+    </div>
+    <div class="form-row">
+        <label>Priority</label>
+        <input type="number" id="node-input-priority">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="restart">
+    <p>
+        The <code>restart</code> hook detects simulation restarts by checking for sequence number wraparounds.
+        It sets a special flag on the sample and triggers restart logic on all connected hooks.
+        <br/>
+        No additional configuration is needed for this hook.
+    </p>
+</script>

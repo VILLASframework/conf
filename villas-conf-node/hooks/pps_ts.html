@@ -1,0 +1,45 @@
+<script type="text/javascript">
+    RED.nodes.registerType('pps_ts', {
+        category: 'Hooks',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "" },
+            mode: { value: "simple" },
+            threshold: { value: 1.5 },
+            expected_smp_rate: { value: 0, required: true },
+            horizon_estimation: { value: 10 },
+            horizon_compensation: { value: 10 },
+            signal: { value: "" },
+            enabled: { value: true },
+            priority: { value: 99 }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.svg",
+        label: function () {
+            return this.name || "pps_ts";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="pps_ts">
+    <div class="form-row"><label>Name</label><input type="text" id="node-input-name" placeholder="Name"></div>
+    <div class="form-row"><label>Mode</label><select id="node-input-mode">
+        <option value="simple">simple</option>
+        <option value="horizon">horizon</option>
+    </select></div>
+    <div class="form-row"><label>Threshold</label><input type="number" id="node-input-threshold" step="0.01"></div>
+    <div class="form-row"><label>Expected Sample Rate</label><input type="number" id="node-input-expected_smp_rate"></div>
+    <div class="form-row"><label>Horizon Estimation</label><input type="number" id="node-input-horizon_estimation"></div>
+    <div class="form-row"><label>Horizon Compensation</label><input type="number" id="node-input-horizon_compensation"></div>
+    <div class="form-row"><label>Signal</label><input type="text" id="node-input-signal" placeholder="e.g. pps"></div>
+    <div class="form-row"><label>Enabled</label><input type="checkbox" id="node-input-enabled"></div>
+    <div class="form-row"><label>Priority</label><input type="number" id="node-input-priority"></div>
+</script>
+
+<script type="text/html" data-help-name="pps_ts">
+    <p>
+        The <code>pps_ts</code> node uses a sampled PPS signal to accurately timestamp incoming samples.
+        This is particularly useful for systems with non-real-time interfaces like USB or Ethernet.
+    </p>
+</script>

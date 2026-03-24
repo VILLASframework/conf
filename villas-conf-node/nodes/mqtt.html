@@ -1,0 +1,50 @@
+<script type="text/javascript">
+    RED.nodes.registerType('mqtt', {
+        category: 'function',
+        color: '#d8bfd8',
+        defaults: {
+            name: { value: "" },
+            broker: { value: "", required: true },
+            topic: { value: "", required: true },
+            qos: { value: 0 },
+            retain: { value: false }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "bridge.svg",
+        label: function () {
+            return this.name || "MQTT";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="mqtt">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-broker"><i class="fa fa-server"></i> MQTT Broker</label>
+        <input type="text" id="node-input-broker">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-list"></i> Topic</label>
+        <input type="text" id="node-input-topic">
+    </div>
+    <div class="form-row">
+        <label for="node-input-qos"><i class="fa fa-signal"></i> QoS</label>
+        <select id="node-input-qos">
+            <option value="0">0 - At most once</option>
+            <option value="1">1 - At least once</option>
+            <option value="2">2 - Exactly once</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-retain"><i class="fa fa-save"></i> Retain</label>
+        <input type="checkbox" id="node-input-retain">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="mqtt">
+    <p>Dieser Node verbindet sich mit einem MQTT-Broker, um Nachrichten zu einem bestimmten Topic zu senden oder zu empfangen.</p>
+</script>

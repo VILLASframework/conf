@@ -1,0 +1,105 @@
+<script type="text/javascript">
+    RED.nodes.registerType('websocket', {
+        category: 'network',
+        defaults: {
+            name: { value: "" },
+            format: { value: "villas.human" },
+            destinations: { value: "" },
+            signals: { value: [] },
+            vectorize: { value: 1 },
+            hooks: { value: ["print"] },
+            builtin: { value: true },
+            out_vectorize: { value: 0 },
+            out_hooks: { value: ["print"] }
+        },
+        inputs: 1,
+        outputs: 1,
+        color: "#a6bbcf",
+        icon: "file.svg",
+        label: function() {
+            return this.name || "websocket";
+        },
+        oneditprepare: function() {
+            $("#node-input-name").val(this.name);
+            $("#node-input-format").val(this.format);
+            $("#node-input-destinations").val(this.destinations);
+            $("#node-input-signals").val(JSON.stringify(this.signals, null, 2));
+            $("#node-input-vectorize").val(this.vectorize);
+            $("#node-input-hooks").val(JSON.stringify(this.hooks, null, 2));
+            $("#node-input-builtin").prop("checked", this.builtin);
+            $("#node-input-out_vectorize").val(this.out_vectorize);
+            $("#node-input-out_hooks").val(JSON.stringify(this.out_hooks, null, 2));
+        },
+        oneditsave: function() {
+            this.name = $("#node-input-name").val();
+            this.format = $("#node-input-format").val();
+            this.destinations = $("#node-input-destinations").val();
+            this.vectorize = parseInt($("#node-input-vectorize").val(), 10);
+            this.out_vectorize = parseInt($("#node-input-out_vectorize").val(), 10);
+            this.builtin = $("#node-input-builtin").prop("checked");
+
+            try {
+                this.signals = JSON.parse($("#node-input-signals").val());
+                this.hooks = JSON.parse($("#node-input-hooks").val());
+                this.out_hooks = JSON.parse($("#node-input-out_hooks").val());
+            } catch (e) {
+                RED.notify("Invalid JSON format in signals or hooks!", "error");
+                return false;
+            }
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="websocket">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Node name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-format"><i class="fa fa-cog"></i> Format</label>
+        <input type="text" id="node-input-format" placeholder="villas.human">
+    </div>
+    <div class="form-row">
+        <label for="node-input-destinations"><i class="fa fa-link"></i> Destinations</label>
+        <input type="text" id="node-input-destinations" placeholder="ws://example.com">
+    </div>
+    <div class="form-row">
+        <label for="node-input-signals"><i class="fa fa-signal"></i> Signals (JSON)</label>
+        <textarea id="node-input-signals"></textarea>
+    </div>
+    <div class="form-row">
+        <label for="node-input-vectorize"><i class="fa fa-list"></i> Vectorize</label>
+        <input type="number" id="node-input-vectorize" placeholder="1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-hooks"><i class="fa fa-wrench"></i> Hooks (JSON)</label>
+        <textarea id="node-input-hooks"></textarea>
+    </div>
+    <div class="form-row">
+        <label for="node-input-builtin"><i class="fa fa-cogs"></i> Built-in Hooks</label>
+        <input type="checkbox" id="node-input-builtin">
+    </div>
+    <div class="form-row">
+        <label for="node-input-out_vectorize"><i class="fa fa-exchange"></i> Output Vectorize</label>
+        <input type="number" id="node-input-out_vectorize" placeholder="0">
+    </div>
+    <div class="form-row">
+        <label for="node-input-out_hooks"><i class="fa fa-wrench"></i> Output Hooks (JSON)</label>
+        <textarea id="node-input-out_hooks"></textarea>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="websocket">
+    <p>This node allows WebSocket communication in Node-RED for VILLASnode.</p>
+    <p>
+        <b>Name:</b> Name of the node.<br>
+        <b>Format:</b> Data format (e.g., "villas.human").<br>
+        <b>Destinations:</b> Comma-separated list of WebSocket server URIs.<br>
+        <b>Signals:</b> JSON array of signals definitions.<br>
+        <b>Vectorize:</b> Number of samples to combine per message.<br>
+        <b>Hooks:</b> JSON array of hooks.<br>
+        <b>Built-in Hooks:</b> Enable or disable default hooks.<br>
+        <b>Output Vectorize:</b> Number of samples in output messages.<br>
+        <b>Output Hooks:</b> JSON array of hooks for output processing.<br>
+    </p>
+</script>

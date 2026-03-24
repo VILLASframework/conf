@@ -1,0 +1,46 @@
+<script type="text/javascript">
+    RED.nodes.registerType('test-rtt', {
+        category: 'function',
+        color: '#ffcc00',
+        defaults: {
+            name: { value: "" },
+            prefix: { value: "test_rtt" },
+            output: { value: "./results", required: true },
+            cooldown: { value: 2, validate: RED.validators.number() },
+            format: { value: "villas.human", required: true }
+        },
+        inputs: 1,
+        outputs: 0,
+        icon: "file.png",
+        label: function () {
+            return this.name || "Test RTT Node";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="test-rtt">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-prefix"><i class="fa fa-folder"></i> Prefix</label>
+        <input type="text" id="node-input-prefix">
+    </div>
+    <div class="form-row">
+        <label for="node-input-output"><i class="fa fa-folder"></i> Output Directory</label>
+        <input type="text" id="node-input-output">
+    </div>
+    <div class="form-row">
+        <label for="node-input-cooldown"><i class="fa fa-clock-o"></i> Cooldown</label>
+        <input type="number" id="node-input-cooldown">
+    </div>
+    <div class="form-row">
+        <label for="node-input-format"><i class="fa fa-file-text-o"></i> Format</label>
+        <input type="text" id="node-input-format">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="test-rtt">
+    <p>Dieser Node führt Round-trip Time (RTT) Tests durch, indem er Testfälle mit verschiedenen Raten und Werten generiert.</p>
+</script>

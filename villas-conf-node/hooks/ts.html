@@ -1,0 +1,40 @@
+<script type="text/javascript">
+    RED.nodes.registerType('ts', {
+        category: 'Hooks',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "" },
+            enabled: { value: true },
+            priority: { value: 99 }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.svg",
+        label: function () {
+            return this.name || "ts";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="ts">
+    <div class="form-row">
+        <label>Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label>Enabled</label>
+        <input type="checkbox" id="node-input-enabled">
+    </div>
+    <div class="form-row">
+        <label>Priority</label>
+        <input type="number" id="node-input-priority">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="ts">
+    <p>
+        The <code>ts</code> hook overwrites the <strong>origin timestamp</strong> of each sample with the system time at which the sample was received.
+        <br/>
+        This is useful when precise time alignment is required or the origin timestamp is missing or unreliable.
+    </p>
+</script>

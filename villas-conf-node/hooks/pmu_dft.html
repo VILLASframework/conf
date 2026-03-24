@@ -1,0 +1,87 @@
+<script type="text/javascript">
+    RED.nodes.registerType('pmu_dft', {
+        category: 'Hooks',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "" },
+            sample_rate: { value: 1000, required: true },
+            start_frequency: { value: 49.7, required: true },
+            end_frequency: { value: 50.3, required: true },
+            frequency_resolution: { value: 0.1, required: true },
+            dft_rate: { value: 10, required: true },
+            window_size_factor: { value: 1 },
+            window_type: { value: "none" },
+            padding_type: { value: "none" },
+            frequency_estimate_type: { value: "none" },
+            pps_index: { value: 0 },
+            angle_unit: { value: "rad" },
+            add_channel_name: { value: false },
+            timestamp_align: { value: "center" },
+            phase_offset: { value: 0 },
+            amplitude_offset: { value: 0 },
+            frequency_offset: { value: 0 },
+            rocof_offset: { value: 0 },
+            signals: { value: "" },
+            enabled: { value: true },
+            priority: { value: 99 }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.svg",
+        label: function () {
+            return this.name || "pmu_dft";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="pmu_dft">
+    <div class="form-row"><label>Name</label><input type="text" id="node-input-name" placeholder="Name"></div>
+    <div class="form-row"><label>Sample Rate</label><input type="number" id="node-input-sample_rate"></div>
+    <div class="form-row"><label>Start Frequency</label><input type="number" id="node-input-start_frequency"></div>
+    <div class="form-row"><label>End Frequency</label><input type="number" id="node-input-end_frequency"></div>
+    <div class="form-row"><label>Frequency Resolution</label><input type="number" id="node-input-frequency_resolution"></div>
+    <div class="form-row"><label>DFT Rate</label><input type="number" id="node-input-dft_rate"></div>
+    <div class="form-row"><label>Window Size Factor</label><input type="number" id="node-input-window_size_factor"></div>
+    <div class="form-row"><label>Window Type</label><select id="node-input-window_type">
+        <option value="none">none</option>
+        <option value="flattop">flattop</option>
+        <option value="hamming">hamming</option>
+        <option value="hann">hann</option>
+    </select></div>
+    <div class="form-row"><label>Padding Type</label><select id="node-input-padding_type">
+        <option value="none">none</option>
+        <option value="zero">zero</option>
+        <option value="signal_repeat">signal_repeat</option>
+    </select></div>
+    <div class="form-row"><label>Frequency Estimate Type</label><select id="node-input-frequency_estimate_type">
+        <option value="none">none</option>
+        <option value="quadratic">quadratic</option>
+    </select></div>
+    <div class="form-row"><label>PPS Index</label><input type="number" id="node-input-pps_index"></div>
+    <div class="form-row"><label>Angle Unit</label><select id="node-input-angle_unit">
+        <option value="rad">rad</option>
+        <option value="degree">degree</option>
+    </select></div>
+    <div class="form-row"><label>Add Channel Name</label><input type="checkbox" id="node-input-add_channel_name"></div>
+    <div class="form-row"><label>Timestamp Align</label><select id="node-input-timestamp_align">
+        <option value="center">center</option>
+        <option value="left">left</option>
+        <option value="right">right</option>
+    </select></div>
+    <div class="form-row"><label>Phase Offset</label><input type="number" id="node-input-phase_offset"></div>
+    <div class="form-row"><label>Amplitude Offset</label><input type="number" id="node-input-amplitude_offset"></div>
+    <div class="form-row"><label>Frequency Offset</label><input type="number" id="node-input-frequency_offset"></div>
+    <div class="form-row"><label>RoCoF Offset</label><input type="number" id="node-input-rocof_offset"></div>
+    <div class="form-row"><label>Signals (comma-separated)</label><input type="text" id="node-input-signals" placeholder="e.g. busA.V,busB.V"></div>
+    <div class="form-row"><label>Enabled</label><input type="checkbox" id="node-input-enabled"></div>
+    <div class="form-row"><label>Priority</label><input type="number" id="node-input-priority"></div>
+</script>
+
+<script type="text/html" data-help-name="pmu_dft">
+    <p>
+        The <code>pmu_dft</code> node performs phasor estimation using DFT.
+        It calculates amplitude, frequency, phase, and RoCoF from the input signals.
+        <br/><br/>
+        <strong>Note:</strong> This is a proof-of-concept and not optimized for production use.
+    </p>
+</script>

@@ -1,0 +1,65 @@
+<script type="text/javascript">
+    RED.nodes.registerType('stats', {
+        category: 'Hooks',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "" },
+            format: { value: "villas.human" },
+            buckets: { value: 20 },
+            warmup: { value: 500 },
+            verbose: { value: false },
+            output: { value: "/dev/stdout" },
+            enabled: { value: true },
+            priority: { value: 99 }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.svg",
+        label: function () {
+            return this.name || "stats";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="stats">
+    <div class="form-row">
+        <label>Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label>Format</label>
+        <input type="text" id="node-input-format" placeholder="e.g. villas.human">
+    </div>
+    <div class="form-row">
+        <label>Output File</label>
+        <input type="text" id="node-input-output" placeholder="/dev/stdout or filename.log">
+    </div>
+    <div class="form-row">
+        <label>Histogram Buckets</label>
+        <input type="number" id="node-input-buckets">
+    </div>
+    <div class="form-row">
+        <label>Warmup Samples</label>
+        <input type="number" id="node-input-warmup">
+    </div>
+    <div class="form-row">
+        <label>Verbose</label>
+        <input type="checkbox" id="node-input-verbose">
+    </div>
+    <div class="form-row">
+        <label>Enabled</label>
+        <input type="checkbox" id="node-input-enabled">
+    </div>
+    <div class="form-row">
+        <label>Priority</label>
+        <input type="number" id="node-input-priority">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="stats">
+    <p>
+        The <code>stats</code> hook collects various metrics and statistics such as gaps, delays, reordering, and optionally RTP metrics.
+        <br/>
+        Results can be written to a file in a selected format.
+    </p>
+</script>
