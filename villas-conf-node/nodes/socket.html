@@ -1,6 +1,6 @@
 <script type="text/javascript">
     RED.nodes.registerType('socket', {
-        category: 'network',
+        category: 'Nodes',
         defaults: {
             name: { value: "" },
             layer: { value: "udp" },
@@ -14,8 +14,8 @@
         },
         inputs: 1,
         outputs: 1,
-        color: "#a6bbcf",
-        icon: "network.svg",
+        color: "#8EBAE5",
+        icon: "font-awesome/fa-plug",
         label: function() {
             return this.name || "socket";
         },

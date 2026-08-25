@@ -1,7 +1,7 @@
 <script type="text/javascript">
     RED.nodes.registerType('influxdb', {
-        category: 'function',
-        color: '#3498db',
+        category: 'Nodes',
+        color: '#8EBAE5',
         defaults: {
             name: { value: "" },
             server: { value: "localhost:8089", required: true },
@@ -9,7 +9,7 @@
         },
         inputs: 1,
         outputs: 0,
-        icon: "database.png",
+        icon: "font-awesome/fa-database",
         label: function () {
             return this.name || "InfluxDB Node";
         }
