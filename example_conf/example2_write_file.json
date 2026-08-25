@@ -1,0 +1,49 @@
+{
+  "nodes": {
+    "signalgenerator": {
+      "type": "signal.v2",
+      "rate": 10.0,
+      "realtime": true,
+      "in": {
+        "signals": [
+          {
+            "name": "randomValues",
+            "signal": "random",
+            "stddev": 0.2
+          }
+        ]
+      }
+    },
+    "file_node": {
+      "type": "file",
+      "format": "json",
+      "uri": "/tmp/example2_output.json",
+      "in": {
+        "signals": [
+          {
+            "name": "randomValues"
+          }
+        ]
+      }
+    }
+  },
+  "paths": [
+    {
+      "in": "signalgenerator",
+      "hooks": [
+        {
+          "type": "round",
+          "signals": ["randomValues"],
+          "precision": 4,
+          "enabled": true
+        },
+        {
+          "type": "print",
+          "signals": ["randomValues"]
+        }
+      ],
+      "out": "file_node"
+    }
+  ]
+}
+

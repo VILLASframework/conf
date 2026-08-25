@@ -1,0 +1,100 @@
+{
+  "nodes": {
+    "polito-villas": {
+      "type": "socket",
+      "in": {
+        "address": "*:10000",
+        "hooks": [
+          "stats"
+        ],
+        "signals": {
+          "count": 36
+        }
+      },
+      "out": {
+        "address": "130.192.95.236:12013"
+      }
+    },
+    "acs-rtds": {
+      "type": "socket",
+      "format": "gtnet",
+      "in": {
+        "address": "*:12000",
+        "signals": {
+          "count": 5
+        }
+      },
+      "out": {
+        "address": "134.130.169.104:12000"
+      }
+    },
+    "siggen": {
+      "type": "signal",
+      "values": 10,
+      "signal": "square",
+      "rate": 10,
+      "frequency": 1
+    },
+    "wss": {
+      "type": "websocket",
+      "destinations": [
+        "http://villas.k8s.eonerc.rwth-aachen.de/ws/relay/jrc-iol-demo"
+      ]
+    },
+    "results": {
+      "type": "file",
+      "format": "csv",
+      "uri": "logs/jrc_iol_%Y-%m-%d_%H-%M-%S.log"
+    }
+  },
+  "paths": [
+    {
+      "in": [
+        "acs-rtds.data[0-1]",
+        "wss.data[0-6]"
+      ],
+      "out": "polito-villas",
+      "hooks": [
+        {
+          "type": "print"
+        }]
+    },
+    {
+      "in": "polito-villas.data[0-1]",
+      "out": "acs-rtds"
+    },
+    {
+      "in": [
+        "polito-villas.data[0-35]",
+        "acs-rtds.data[2-4]",
+        "siggen.data[0]"
+      ],
+      "out": [
+        "results"
+      ]
+    },
+    {
+      "in": [
+        "polito-villas.data[0-35]",
+        "acs-rtds.data[2-4]",
+        "siggen.data[0]"
+      ],
+      "out": [
+        "wss"
+      ],
+      "hooks": [
+        {
+          "type": "limit_rate",
+          "rate": 10
+        },
+        {
+          "type": "ts"
+        },
+        {
+          "type": "print"
+        }
+      ]
+    }
+  ]
+}
+
