@@ -1,0 +1,71 @@
+<script type="text/javascript">
+(function () {
+    RED.nodes.registerType("signal-generator", {
+        category: "Nodes",
+        color: "#8EBAE5",
+        defaults: {
+            name: {value: "Signal Generator (v2)"},
+            realtime: {value: true},
+            rate: {value: 0, required: false, validate: RED.validators.number()},
+        },
+        inputs: 1,
+        outputs: 1,
+        outputLabels: ["signals"],
+        icon: "font-awesome/fa-sitemap",
+        paletteLabel: "signal generator",
+
+        label: function () {
+            return this.name || "Signal Generator";
+        },
+        oneditprepare: function() {
+            function updateRateVisibility() {
+                if ($("#node-input-realtime").is(":checked")) {
+                    $("#signalgenerator-rate-row").show();
+                } else {
+                    $("#signalgenerator-rate-row").hide();
+                }
+            }
+
+            $("#node-input-realtime").on("change", updateRateVisibility);
+
+            updateRateVisibility();
+        }
+    });
+})();
+</script>
+
+<script type="text/html" data-template-name="signal-generator">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Signal Generator (v2)">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-realtime"><i class="fa fa-clock-o"></i> Real time</label>
+        <input type="checkbox" id="node-input-realtime" style="width:auto;">
+    </div>
+
+    <div class="form-row" id="signalgenerator-rate-row">
+        <label for="node-input-rate">
+            <i class="fa fa-tachometer"></i> Rate
+        </label>
+        <input type="number" id="node-input-rate">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-monitor-missed"><i class="fa fa-display"></i> Monitor Missed</label>
+        <input type="checkbox" id="node-input-monitor-missed" style="width:auto;">
+    </div>
+
+
+    <div class="form-tips">
+        Signal Generator node needs to be connected 
+        to <b>at least one</b> signal.
+    </div>
+</script>
+
+<script type="text/html" data-help-name="signal-generator">
+    <p>The Signal Generator (v2) is a simple signal generator which can be used to generate various types of signals.
+        Most commonly, it is used for testing when no real simulation data is available.
+    </p>
+</script>

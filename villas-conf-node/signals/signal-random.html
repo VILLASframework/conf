@@ -1,0 +1,58 @@
+<script type="text/javascript">
+RED.nodes.registerType("signal-random", {
+    category: "Signal",
+    color: "#E0E69A",
+    defaults: {
+        name: { value: "Random" },
+        dataType: { value: "float", required: true },
+        unit: { value: "" },
+        stddev: { value: 0.2, required: false, validate: RED.validators.number() },
+        initialValue: { value: 0, required: false, validate: RED.validators.number() },
+        enabled: { value: true, required:false, value: true },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "font-awesome/fa-random",
+    paletteLabel: "random",
+    label: function () {
+        return this.name || "Random";
+    }
+});
+</script>
+
+<script type="text/html" data-template-name="signal-random">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Random">
+    </div>
+    <hr>
+    <div class="form-row">
+        <label for="node-input-dataType"><i class="fa fa-code"></i> Data type</label>
+        <select id="node-input-dataType">
+            <option value="float">float</option>
+            <option value="integer">integer</option>
+            <option value="boolean">boolean</option>
+            <option value="string">complex</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-unit"><i class="fa fa-tag"></i> Unit</label>
+        <input type="text" id="node-input-unit">
+    </div>
+    <div class="form-row">
+        <label for="node-input-stddev"><i class="fa fa-dot-circle-o"></i> Standard deviation</label>
+        <input type="number" id="node-input-stddev">
+    </div>
+    <div class="form-row">
+        <label for="node-input-initialValue"><i class="fa fa-dot-circle-o"></i> Initial value</label>
+        <input type="number" id="node-input-initialValue">
+    </div>
+    <div class="form-row">
+        <label for="node-input-enabled"><i class="fa fa-power-off"></i> Enabled</label>
+        <input type="checkbox" id="node-input-enabled" style="width:auto;">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="signal-random">
+    <p>A random walk signal with normal distributed step sizes will be generated.</p>
+</script>

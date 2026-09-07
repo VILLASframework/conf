@@ -1,0 +1,75 @@
+<script type="text/javascript">
+RED.nodes.registerType("signal-sine", {
+    category: "Signal",
+    color: "#E0E69A",
+    defaults: {
+        name: { value: "sine" },
+        unit: { value: "" },
+        dataType: { value: "float", required: true },
+        initialValue: { value: 0, required: true },
+        offset: { value: 0, required: false, validate: RED.validators.number() },
+        enabled: { value: true },
+        amplitude: { value: 1, required: false, validate: RED.validators.number() },
+        frequency: { value: 1, required: false, validate: RED.validators.number() },
+        phase: { value: 0, required: false, validate: RED.validators.number() }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "font-awesome/fa-line-chart",
+    paletteLabel: "sine",
+    label: function () {
+        return this.name || "Sine";
+    }
+});
+</script>
+
+<script type="text/html" data-template-name="signal-sine">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Sine">
+    </div>
+    <div class="form-row">
+        <label for="node-input-amplitude"><i class="fa fa-arrows-v"></i> Amplitude</label>
+        <input type="number" id="node-input-amplitude" step="any">
+    </div>
+    <div class="form-row">
+        <label for="node-input-frequency"><i class="fa fa-repeat"></i> Frequency</label>
+        <input type="number" id="node-input-frequency" min="0" step="any">
+        <span>Hz</span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-phase"><i class="fa fa-rotate-right"></i> Phase</label>
+        <input type="number" id="node-input-phase" step="any">
+        <span>deg</span>
+    </div>
+    <hr>
+    <div class="form-row">
+        <label for="node-input-offset"><i class="fa fa-plus"></i> Offset</label>
+        <input type="number" id="node-input-offset" step="any">
+    </div>
+    <div class="form-row">
+        <label for="node-input-unit"><i class="fa fa-tag"></i> Unit</label>
+        <input type="text" id="node-input-unit">
+    </div>
+    <div class="form-row">
+        <label for="node-input-dataType"><i class="fa fa-code"></i> Data type</label>
+        <select id="node-input-dataType">
+            <option value="float">Float</option>
+            <option value="integer">Integer</option>
+            <option value="boolean">Boolean</option>
+            <option value="string">String</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-initialValue"><i class="fa fa-dot-circle-o"></i> Initial value</label>
+        <input type="text" id="node-input-initialValue">
+    </div>
+    <div class="form-row">
+        <label for="node-input-enabled"><i class="fa fa-power-off"></i> Enabled</label>
+        <input type="checkbox" id="node-input-enabled" style="width:auto;">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="signal-sine">
+    <p>Declarative sine signal.</p>
+</script>

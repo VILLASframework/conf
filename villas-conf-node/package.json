@@ -12,7 +12,10 @@
     "nodes": {
       "config-start": "nodes/config-start.js",
       "config-end": "nodes/config-end.js",
+      "signal-generator": "nodes/signal-generator.js",
       "signal": "nodes/signal.js",
+      "signal-random": "signals/signal-random.js",
+      "signal-sine": "signals/signal-sine.js",
       "signal.v2-signal-config-in": "nodes/signal.v2-signal-config-in.js",
       "signal.v2-signal-config-out": "nodes/signal.v2-signal-config-out.js",
       "villas-file": "nodes/villas-file.js",
