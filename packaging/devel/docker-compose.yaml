@@ -1,8 +1,6 @@
-version: "3.7"
-
 services:
   node-red:
-    image: nodered/node-red:latest
+    build: .
     entrypoint: /entrypoint.sh
     hostname: "nodered"
     environment:
@@ -13,3 +11,4 @@ services:
       - ../../containerData:/data
       - ../../villas-conf-node:/villas-conf-node
       - ./entrypoint.sh:/entrypoint.sh
+      - /home/iko/Downloads/villasconfig.json:/tmp/villasconfig.json

@@ -1,16 +1,11 @@
 #!/bin/sh
 
 npm i /villas-conf-node
-
 npm i nodemon
 
-# sleep infinity
-
-/usr/src/node-red/node_modules/.bin/nodemon --watch /villas-conf-node/ -e js,mjs,cjs,json,html node_modules/node-red/red.js --userDir /data $FLOWS
-
-# ID=$!
-
-# cd /data
-# npm i /villas-conf-node
-
-# fg $ID
+/usr/src/node-red/node_modules/.bin/nodemon \
+  --watch /villas-conf-node/ \
+  -e js,mjs,cjs,json,html \
+  node_modules/node-red/red.js \
+  --userDir /data \
+  $FLOWS

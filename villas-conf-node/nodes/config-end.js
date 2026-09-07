@@ -1,3 +1,7 @@
+const fs = require("fs");
+
+FILEPATH = "/tmp/villasconfig.json";
+
 module.exports = function (RED) {
   function ConfigEndNode(config) {
     RED.nodes.createNode(this, config);
@@ -11,13 +15,22 @@ module.exports = function (RED) {
     /**
      * @param {impot("../typedefs").Message} _msg
      */
-    const inputHandler = function (_msg) {
-      // TODO: save to file and propt user to download it.
+    node.on("input", function (_msg) {
+      config = builder.getConfig();
 
-      console.log(" #### BUILDER DEBUG PRINT ### ");
-      builder.print();
-    };
-    node.on("input", inputHandler);
+      fs.writeFile(FILEPATH, config, (err) => {
+        if (err) {
+          console.error("Error writing config file:", err);
+        }
+
+      node.status({
+        fill: "green",
+        shape: "dot",
+        text: "Config written to " + FILEPATH });
+    });
+
+      //builder.print();
+    });
   }
 
   RED.nodes.registerType("config-end", ConfigEndNode);

@@ -120,7 +120,7 @@ class ConfBuilder {
    * Add a hook to a path
    * @param {string} redId The node-red id of the hook "node"
    * @param {any} config The configuration of the hook
-   * @param {string[]} wires The connected wrires from this hook
+   * @param {string[]} wires The connected wires from this hook
    */
   addHook(redId, config, wires) {
     //get the path to add the hook to.
@@ -152,6 +152,22 @@ class ConfBuilder {
         path.hooks.push(config);
         if (wires.length == 1) path._next = wires[0]; //continue
       });
+  }
+
+  addSignal(redId, signalConfig, msg) {
+    if (msg.payload.origin !== "signal-generator") {
+      throw new Error(`Signal ${redId} is not originating from a signal-generator node.`);
+    }
+    const parentNode = this.config.nodes[msg.payload.originName];
+    if (!parentNode) {
+      throw new Error(`Parent node configuration for signal ${redId} not found.`);
+    }
+
+    // Add the signal configuration to the parent node's signals array
+    if (!parentNode.in.signals) {
+      parentNode.in.signals = [];
+    }
+    parentNode.in.signals.push(signalConfig);
   }
 
   /**
@@ -204,6 +220,10 @@ class ConfBuilder {
 
   print() {
     console.log("Generated json", this.build());
+  }
+
+  getConfig() {
+    return this.build();
   }
 }
 
