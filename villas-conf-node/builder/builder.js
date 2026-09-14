@@ -73,12 +73,13 @@ class ConfBuilder {
 
     //close pending wires ending with this node. (This is a node thus it allways ends a path when going through it)
     this._pending
-      .filter((path) => path.next == redId)
+      .filter((path) => path._next == redId)
       .forEach((path) => {
-        this.closePending(path.pendingId, name);
+        this.closePending(path._pendingId, name);
       });
 
     //add pending paths if any
+    // wires are the outgoing connections from the node, thus we create a pending path for each wire.
     if (wires.length > 0) {
       wires.forEach((nodeId) => {
         this._pending.push({
@@ -143,7 +144,6 @@ class ConfBuilder {
       return new UndefinedHookPathError(redId, config.type | "empty");
     }
 
-    //check for all pending paths that go through this hooks
     this._pending
       .filter((path) => {
         return path._next === redId;
@@ -151,6 +151,28 @@ class ConfBuilder {
       .forEach((path) => {
         path.hooks.push(config);
         if (wires.length == 1) path._next = wires[0]; //continue
+      });
+  }
+
+
+    addHook2(redId, config, msg, wires) {
+    // kept in, TODO: consider whether this logic is still/actually true
+    if (wires.length > 1) {
+      return new UndefinedHookPathError(redId, config.type | "empty");
+    }
+
+    //check all pending paths
+    this._pending
+      .filter((path) => {
+        // check if path._next (signal id) is in the trace of this hook
+        return msg.payload.trace.includes(path._next);
+      })
+      .forEach((path) => {
+        // add the signal id to this hooks config
+        config.signals.push(msg.payload.originName);
+        path.hooks.push(config);
+        // if there is only one wire, the wired/next node is also in this path
+      if (wires.length == 1) path._next = wires[0];
       });
   }
 
@@ -186,6 +208,7 @@ class ConfBuilder {
       return value;
     };
 
+    // TODO (?) reset config to empty (original state after constructor)
     return JSON.stringify(this.config, replacer, 2);
   }
 
@@ -201,9 +224,11 @@ class ConfBuilder {
     );
     const path = this._pending[index];
 
-    if (outNodeName !== undefined && outNodeName !== "") path.out = outNodeName;
+    if (outNodeName !== undefined && outNodeName !== "") {
+      path.out = outNodeName;
+      this.addPath(path);
+    }
 
-    this.addPath(path);
     //remove elements from _pending
     this._pending.splice(index, 1);
   }
@@ -216,6 +241,27 @@ class ConfBuilder {
     this._pending.forEach((pending) => {
       this.closePending(pending._pendingId);
     });
+
+    // go through paths - if both in and out of two paths are equal,
+    // write all hooks into one array and remove superfluous paths
+    if (this.config.paths.length > 1) {
+      const uniquePaths = [];
+      const pathMap = new Map();
+
+      this.config.paths.forEach((path) => {
+        const key = `${path.in}-${path.out}`;
+        // if the path already exists, merge hooks
+        if (pathMap.has(key)) {
+          const existingPath = pathMap.get(key);
+          existingPath.hooks = [...existingPath.hooks, ...path.hooks];
+        // if the path doesn't exist, add it to the map and uniquePaths
+        } else {
+          pathMap.set(key, path);
+          uniquePaths.push(path);
+        }
+      });
+      this.config.paths = uniquePaths;
+    }
   }
 
   print() {

@@ -26,8 +26,13 @@ module.exports = function (RED) {
       node.status({
         fill: "green",
         shape: "dot",
-        text: "Config written to " + FILEPATH });
+        text: "Config written to " + FILEPATH
+      });
+      setTimeout(() => {
+        node.status({});
+      }, 5000);
     });
+
 
       //builder.print();
     });

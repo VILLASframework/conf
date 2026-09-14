@@ -19,19 +19,16 @@ module.exports = function (RED) {
 
         node.on("input", function (msg) {
             builder.addSignal(this.id, signalConfig, msg);
-            msg.payload.originId = this.id;
+
+            msg.payload = {
+                ...msg.payload,
+                origin: "signal-sine",
+                originId: this.id,
+                originName: config.name,
+                trace: [...(msg.payload.trace || []), this.id]
+            };
             node.send(msg);
         });
-
-        this.name = config.name || "Sine";
-        this.unit = config.unit || "";
-        this.dataType = config.dataType || "float";
-        this.initialValue = config.initialValue;
-        this.offset = Number(config.offset) || 0;
-        this.enabled = config.enabled !== false;
-        this.amplitude = Number(config.amplitude);
-        this.frequency = Number(config.frequency);
-        this.phase = Number(config.phase);
     }
 
     RED.nodes.registerType("signal-sine", SineSignalNode);

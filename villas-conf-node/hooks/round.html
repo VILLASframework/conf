@@ -1,21 +1,14 @@
 <script type="text/javascript">
   RED.nodes.registerType("round", {
     category: "Hooks",
-    color: "#C7CEEA",
+    color: "#25C2A0",
     defaults: {
       hooktype: { value: "round", required: true },
-      // precision: { value: 1 },
-      // signalId: { value: "", type: "signal-config" },
-      "villas-type": { value: "round", required: true },
-      "villas-signalsEncoded": { value: "" },
-      "villas-signalsTemplate": { value: "", type: "signal-config" },
-      "villas-precision": { value: 1 },
-      "villas-enabled": { value: true },
-      "villas-priority": { value: "" },
+      precision: { value: 1 },
     },
     inputs: 1,
     outputs: 1,
-    icon: "file.svg",
+    icon: "font-awesome/fa-circle",
     label: function () {
       return "round";
     },

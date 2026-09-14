@@ -16,7 +16,14 @@ module.exports = function (RED) {
 
         node.on("input", function (msg) {
             builder.addSignal(this.id, signalConfig, msg);
-            msg.payload.originId = this.id;
+
+            msg.payload = {
+                ...msg.payload,
+                origin: "signal-random",
+                originId: this.id,
+                originName: config.name,
+                trace: [...(msg.payload.trace || []), this.id]
+            };
             node.send(msg);
         });
     }

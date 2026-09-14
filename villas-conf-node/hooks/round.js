@@ -5,31 +5,25 @@ module.exports = function (RED) {
     RED.nodes.createNode(this, config);
     var node = this;
 
-    /**
-     * @type {import("../builder/builder").ConfBuilder}
-     */
     const builder = this.context().flow.get("builder");
 
-    // Create one ConfigurationBuilder instance
+    const hookConfig = {
+      type: config.hooktype,
+      signals: [],
+      precision: config.precision,
+    }
 
-    /**
-     * @param {import("../typedefs").Message} msg
-     * @return {import("../typedefs").Message}
-     */
     const inputHandler = function (msg) {
       const wires = this.wires.flat();
 
-      console.log("HOOK WIRES: ", wires);
-      //builder.addHook(this.id, { test: 2 }, wires);
+      builder.addHook2(this.id, hookConfig, msg, wires);
 
-      let parsed = decomposeArrays(config);
-      let cleaned = cleanProps(parsed);
-
-      builder.addHook(this.id, cleaned, wires);
-
-      msg.payload.origin = this.hooktype;
-      msg.payload.originId = this.id;
-      msg.payload.trace.push(this.id);
+      msg.payload = {
+        ...msg.payload,
+        origin: this.hooktype,
+        originId: this.id,
+        trace: [...(msg.payload.trace || []), this.id]
+      };
       node.send(msg);
     };
     node.on("input", inputHandler);
