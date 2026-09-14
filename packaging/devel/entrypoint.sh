@@ -8,4 +8,5 @@ npm i nodemon
   -e js,mjs,cjs,json,html \
   node_modules/node-red/red.js \
   --userDir /data \
+  --settings /villas-conf-node/settings.js \
   $FLOWS

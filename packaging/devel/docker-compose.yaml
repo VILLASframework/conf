@@ -10,5 +10,6 @@ services:
     volumes:
       - ../../containerData:/data
       - ../../villas-conf-node:/villas-conf-node
+      - ../../villas-conf-node/settings.js:/data/settings.js
       - ./entrypoint.sh:/entrypoint.sh
       - /home/iko/Downloads/villasconfig.json:/tmp/villasconfig.json

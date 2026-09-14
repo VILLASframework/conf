@@ -383,7 +383,13 @@ httpStatic: "./public",
          * time you access the editor for each release of Node-RED, set this to false
          */
         //tours: false,
+        header: {
+            title: "VILLASconf",
+            image: "/villas-conf-node/assets/villas_node.svg"
+        },
         page: {
+            title: "VILLASconf",
+            favicon: "/villas-conf-node/assets/villas_node.svg",
             scripts: ["/editor/export.js"]
         },
         palette: {
