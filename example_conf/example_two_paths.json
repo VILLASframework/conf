@@ -1,0 +1,55 @@
+{
+  "nodes": {
+    "signalgenerator": {
+      "realtime": true,
+      "rate": 2,
+      "type": "signal.v2",
+      "in": {
+        "signals": [
+          {
+            "signal": "random",
+            "name": "Random",
+            "initialValue": 4,
+            "dataType": "float",
+            "unit": "V",
+            "enabled": true
+          },
+          {
+            "signal": "sine",
+            "name": "sine",
+            "amplitude": 1,
+            "frequency": 1,
+            "dataType": "float",
+            "enabled": true
+          }
+        ]
+      }
+    },
+    "myfile": {
+      "name": "myfile",
+      "uri": "/tmp/example4-output.json",
+      "type": "file"
+    }
+  },
+  "paths": [
+    {
+      "in": "signalgenerator",
+      "hooks": [
+        {
+          "type": "round",
+          "signals": [
+            "Random"
+          ]
+        },
+        {
+          "type": "rms",
+          "window_size": 3,
+          "signals": [
+            "sine"
+          ]
+        }
+      ],
+      "out": "myfile"
+    }
+  ]
+}

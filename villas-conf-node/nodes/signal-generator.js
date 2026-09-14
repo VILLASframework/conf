@@ -7,6 +7,7 @@ module.exports = function (RED) {
         const nodeConfig =  {
             realtime: config.realtime,
             rate: parseFloat(config.rate),
+            type: "signal.v2",
             in: {
                 signals: config.signals || [],
             },

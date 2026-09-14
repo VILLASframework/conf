@@ -4,7 +4,7 @@
         color: '#25C2A0',
         defaults: {
             hooktype: { value: "rms", required: true },
-            windowsize: { value: 0 },
+            windowsize: { value: 0, required: true},
             enabled: { value: true },
             priority: { value: "" },
         },
@@ -21,6 +21,10 @@
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-windowsize"><i class="fa fa-plus"></i> Window Size</label>
+        <input type="number" id="node-input-windowsize" step="any">
     </div>
 </script>
 

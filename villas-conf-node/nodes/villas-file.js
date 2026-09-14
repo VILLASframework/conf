@@ -12,6 +12,7 @@ module.exports = function (RED) {
             const nodeConfig = {
                 name: config.name || "default_name",
                 uri: config.uri || "http://default.uri",
+                type: "file",
             };
 
             builder.addNode(this.id, config.name, nodeConfig, wires);

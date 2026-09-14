@@ -8,6 +8,7 @@ module.exports = function(RED) {
         const rmshookConfig = {
             type: config.hooktype || "rms",
             window_size: config.windowsize,
+            ...(config.windowsize != null && { window_size: Number(config.windowsize) }),
             signals: [],
             enabled: config.enabled,
             priority: config.priority,
