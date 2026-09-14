@@ -59,6 +59,9 @@ module.exports = {
      * The following property can be used to specify an additional directory to scan.
      */
     //nodesDir: '/home/nol/.node-red/nodes',
+    nodesIncludes: [
+        "villas-conf-node"
+    ],
 
 /*******************************************************************************
  * Security
@@ -399,9 +402,6 @@ httpStatic: "./public",
              * If not set, the following default order is used:
              */
             //categories: ['subflows', 'common', 'function', 'network', 'sequence', 'parser', 'storage'],
-            nodes: {
-                "@node-red/nodes/core": false
-            }
         },
 
         projects: {
