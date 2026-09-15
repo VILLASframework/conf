@@ -8,7 +8,6 @@ RED.nodes.registerType("signal-random", {
         unit: { value: "" },
         stddev: { value: 0.2, required: false, validate: RED.validators.number() },
         initialValue: { value: 0, required: false, validate: RED.validators.number() },
-        enabled: { value: true, required:false, value: true },
     },
     inputs: 1,
     outputs: 1,
@@ -46,10 +45,6 @@ RED.nodes.registerType("signal-random", {
     <div class="form-row">
         <label for="node-input-initialValue"><i class="fa fa-dot-circle-o"></i> Initial value</label>
         <input type="number" id="node-input-initialValue">
-    </div>
-    <div class="form-row">
-        <label for="node-input-enabled"><i class="fa fa-power-off"></i> Enabled</label>
-        <input type="checkbox" id="node-input-enabled" style="width:auto;">
     </div>
 </script>
 

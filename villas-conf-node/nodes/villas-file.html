@@ -4,16 +4,7 @@
         defaults: {
             name: { value: "" },
             uri: { value: "http://example.com" },
-            format: { value: "villas.human" },
-            epoch: { value: 0 },
-            epoch_mode: { value: "direct" },
-            signals: { value: [] },
-            vectorize: { value: 1 },
-            hooks: { value: ["Print"] },
-            output_vectorize: { value: 0 },
-            output_hooks: { value: ["Print"] },
-            builtin: { value: true }
-        },
+       },
         inputs: 1,
         outputs: 1,
         color: "#8EBAE5",
@@ -25,34 +16,10 @@
            
             $("#node-input-name").val(this.name);
             $("#node-input-uri").val(this.uri);
-            $("#node-input-format").val(this.format);
-            $("#node-input-epoch").val(this.epoch);
-            $("#node-input-epoch-mode").val(this.epoch_mode);
-            $("#node-input-signals").val(this.signals.join(", "));
-            $("#node-input-vectorize").val(this.vectorize);
-            $("#node-input-hooks").val(JSON.stringify(this.hooks, null, 2));
-            $("#node-input-output-vectorize").val(this.output_vectorize);
-            $("#node-input-output-hooks").val(JSON.stringify(this.output_hooks, null, 2));
         },
         oneditsave: function() {
-            
             this.name = $("#node-input-name").val();
             this.uri = $("#node-input-uri").val();
-            this.format = $("#node-input-format").val();
-            this.epoch = parseInt($("#node-input-epoch").val(), 10);
-            this.epoch_mode = $("#node-input-epoch-mode").val();
-            this.signals = $("#node-input-signals").val().split(",").map(s => s.trim());
-            this.vectorize = parseInt($("#node-input-vectorize").val(), 10);
-            this.output_vectorize = parseInt($("#node-input-output-vectorize").val(), 10);
-
-            
-            try {
-                this.hooks = JSON.parse($("#node-input-hooks").val());
-                this.output_hooks = JSON.parse($("#node-input-output-hooks").val());
-            } catch (e) {
-                RED.notify("Invalid JSON format in hooks!", "error");
-                return false;
-            }
         }
     });
 </script>
@@ -66,58 +33,12 @@
         <label for="node-input-uri"><i class="fa fa-link"></i> URI</label>
         <input type="text" id="node-input-uri" placeholder="Enter URI">
     </div>
-    <div class="form-row">
-        <label for="node-input-format"><i class="fa fa-cog"></i> Format</label>
-        <input type="text" id="node-input-format" placeholder="villas.human">
-    </div>
-    <div class="form-row">
-        <label for="node-input-epoch"><i class="fa fa-clock"></i> Epoch</label>
-        <input type="number" id="node-input-epoch" placeholder="0">
-    </div>
-    <div class="form-row">
-        <label for="node-input-epoch-mode"><i class="fa fa-cogs"></i> Epoch Mode</label>
-        <input type="text" id="node-input-epoch-mode" placeholder="direct">
-    </div>
-    <div class="form-row">
-        <label for="node-input-signals"><i class="fa fa-signal"></i> Signals</label>
-        <input type="text" id="node-input-signals" placeholder="signal1, signal2">
-    </div>
-    <div class="form-row">
-        <label for="node-input-vectorize"><i class="fa fa-cube"></i> Vectorize</label>
-        <select id="node-input-vectorize">
-            <option value="1">Yes</option>
-            <option value="0">No</option>
-        </select>
-    </div>
-    <div class="form-row">
-        <label for="node-input-hooks"><i class="fa fa-wrench"></i> Hooks (JSON)</label>
-        <textarea id="node-input-hooks" placeholder='["print", {"type": "limit_rate", "rate": 1000}]'></textarea>
-    </div>
-    <div class="form-row">
-        <label for="node-input-output-vectorize"><i class="fa fa-cube"></i> Output Vectorize</label>
-        <select id="node-input-output-vectorize">
-            <option value="1">Yes</option>
-            <option value="0">No</option>
-        </select>
-    </div>
-    <div class="form-row">
-        <label for="node-input-output-hooks"><i class="fa fa-wrench"></i> Output Hooks (JSON)</label>
-        <textarea id="node-input-output-hooks" placeholder='["print", {"type": "limit_rate", "rate": 1000}]'></textarea>
-    </div>
 </script>
 
 <script type="text/html" data-help-name="villas-file">
-    <p>This node is used for configuring VILLAS file nodes.</p>
+    <p>The file node-type can be used to log or replay samples to/from disk.</p>
     <p>
         <b>Name:</b> Name of the node.<br>
-        <b>URI:</b> URI endpoint for the node.<br>
-        <b>Format:</b> Data format (e.g., "villas.human").<br>
-        <b>Epoch:</b> Initial epoch value.<br>
-        <b>Epoch Mode:</b> Mode for the epoch (e.g., "direct").<br>
-        <b>Signals:</b> Comma-separated list of signals.<br>
-        <b>Vectorize:</b> Whether to vectorize input.<br>
-        <b>Hooks:</b> Array of hooks in JSON format.<br>
-        <b>Output Vectorize:</b> Whether to vectorize output.<br>
-        <b>Output Hooks:</b> Array of hooks for output in JSON format.
+        <b>URI:</b> Specifies the URI to a file from which is written to or read from.<br>
     </p>
 </script>

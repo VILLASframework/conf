@@ -8,7 +8,6 @@ RED.nodes.registerType("signal-sine", {
         dataType: { value: "float", required: true },
         initialValue: { value: 0, required: true },
         offset: { value: 0, required: false, validate: RED.validators.number() },
-        enabled: { value: true },
         amplitude: { value: 1, required: false, validate: RED.validators.number() },
         frequency: { value: 1, required: false, validate: RED.validators.number() },
         phase: { value: 0, required: false, validate: RED.validators.number() }
@@ -63,10 +62,6 @@ RED.nodes.registerType("signal-sine", {
     <div class="form-row">
         <label for="node-input-initialValue"><i class="fa fa-dot-circle-o"></i> Initial value</label>
         <input type="text" id="node-input-initialValue">
-    </div>
-    <div class="form-row">
-        <label for="node-input-enabled"><i class="fa fa-power-off"></i> Enabled</label>
-        <input type="checkbox" id="node-input-enabled" style="width:auto;">
     </div>
 </script>
 

@@ -16,6 +16,7 @@ module.exports = function (RED) {
     const inputHandler = function (msg) {
       const wires = this.wires.flat();
 
+      hookConfig.signals = []
       builder.addHook2(this.id, hookConfig, msg, wires);
 
       msg.payload = {

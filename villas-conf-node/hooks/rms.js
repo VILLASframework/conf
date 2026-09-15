@@ -6,16 +6,16 @@ module.exports = function(RED) {
         const builder = this.context().flow.get("builder");
 
         const rmshookConfig = {
-            type: config.hooktype || "rms",
-            window_size: config.windowsize,
-            ...(config.windowsize != null && { window_size: Number(config.windowsize) }),
+            type: "rms",
             signals: [],
-            enabled: config.enabled,
-            priority: config.priority,
+            ...(config.windowsize != null && { window_size: Number(config.windowsize) }),
+            ...(config.priority != null && { priority: Number(config.priority) }),
         }
 
         node.on('input', function(msg) {
             const wires = this.wires.flat();
+            rmshookConfig.signals = [];
+
             builder.addHook2(this.id, rmshookConfig, msg, wires);
 
             msg.payload = {

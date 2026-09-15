@@ -8,7 +8,7 @@
     },
     inputs: 1,
     outputs: 1,
-    icon: "font-awesome/fa-circle",
+    icon: "font-awesome/fa-circle-o-notch",
     label: function () {
       return "round";
     },
@@ -111,7 +111,7 @@
     <div class="form-subrow"></div>
   </div>
   <div class="form-row">
-    <label for="node-input-villas-precision">Precision</label>
+    <label for="node-input-villas-precision"><i class="fa fa-dot-circle-o"></i> Precision</label>
     <input
       type="number"
       name="node-input-villas-precision"
@@ -121,6 +121,7 @@
       max="1000"
     />
   </div>
+<!--
   <div class="form-row">
     <label for="node-input-villas-enabled">Enabled</label>
     <input
@@ -130,8 +131,9 @@
       placeholder="true"
     />
   </div>
+-->
   <div class="form-row">
-    <label for="node-input-villas-priority">Priority</label>
+    <label for="node-input-villas-priority"><i class="fa fa-sort"></i> Priority</label>
     <input
       type="number"
       name="node-input-villas-priority"
@@ -156,5 +158,13 @@
 </style>
 
 <script type="text/html" data-help-name="round">
-  <p>A simple hook to test hook behaviour</p>
+    <p>The round hook rounds selected signals to a specified number of digits.</p>
+    <p>
+        <b>Precision:</b> The number of decimal digits to which the signal is rounded.<br>
+        <b>Priority:</b> The hook priority determines execution order.
+        Hooks with a lower priority are executed before ones with a higher priority.<br>
+
+        If no priority is configured, hooks are executed in the order in which they are listed
+        in the configuration file.<br>
+    </p>
 </script>

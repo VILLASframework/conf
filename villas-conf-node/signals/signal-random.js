@@ -11,7 +11,6 @@ module.exports = function (RED) {
             ...(config.initialValue != null && { initialValue: parseFloat(config.initialValue) }),
             ...(config.dataType != null && { dataType: config.dataType }),
             ...(config.unit != null && { unit: config.unit }),
-            ...(config.enabled != null && { enabled: config.enabled })
         }
 
         node.on("input", function (msg) {

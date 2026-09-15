@@ -27,10 +27,6 @@ module.exports = function (RED) {
 
             node.send(msg);
         });
-
-        node.on("close", function () {
-            node.log("Signal Generator Node closed.");
-        });
     }
 
     RED.nodes.registerType("signal-generator", SignalGeneratorNode);
