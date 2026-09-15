@@ -174,7 +174,7 @@ class ConfBuilder {
     if (msg.payload.origin !== "signal-generator") {
       throw new Error(`Signal ${redId} is not originating from a signal-generator node.`);
     }
-    const parentNode = this.config.nodes[msg.payload.originName];
+    var parentNode = this.config.nodes[msg.payload.originName];
     if (!parentNode) {
       throw new Error(`Parent node configuration for signal ${redId} not found.`);
     }
@@ -205,6 +205,12 @@ class ConfBuilder {
     const json = JSON.stringify(this.config, replacer, 2);
 
     // reset config to empty (original state after constructor)
+    Object.entries(this.config.nodes).forEach(([_nodename, nodedef]) => {
+      if (nodedef.in && nodedef.in.signals) {
+        nodedef.in.signals = [];
+      }
+    })
+
     this.config = {
       nodes: {},
       paths: [],
