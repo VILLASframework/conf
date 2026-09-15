@@ -1,40 +1,28 @@
-const fs = require("fs");
-
-FILEPATH = "/tmp/villasconfig.json";
-
 module.exports = function (RED) {
   function ConfigEndNode(config) {
     RED.nodes.createNode(this, config);
     var node = this;
 
-    /**
-     * @type {import("../builder/builder").ConfBuilder}
-     */
     const builder = this.context().flow.get("builder");
 
-    /**
-     * @param {impot("../typedefs").Message} _msg
-     */
     node.on("input", function (_msg) {
-      config = builder.getConfig();
+      const config = builder.getConfig();
+      const filename = "villasconfig.json";
 
-      fs.writeFile(FILEPATH, config, (err) => {
-        if (err) {
-          console.error("Error writing config file:", err);
-        }
+      RED.comms.publish("config-end/download", {
+        filename: filename,
+        content: config
+      });
 
       node.status({
         fill: "green",
         shape: "dot",
-        text: "Config written to " + FILEPATH
+        text: "Config " + filename + " sent to browser"
       });
+
       setTimeout(() => {
         node.status({});
       }, 5000);
-    });
-
-
-      //builder.print();
     });
   }
 

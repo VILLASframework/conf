@@ -8,6 +8,23 @@
     icon: "font-awesome/fa-gears",
     label: "config-end",
   });
+
+  RED.comms.subscribe("config-end/download", function (eventName, msg) {
+    const blob = new Blob([msg.content], {
+      type: "application/json"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = msg.filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    URL.revokeObjectURL(url);
+  });
 </script>
 
 <script type="text/html" data-template-name="config-end"></script>

@@ -23,12 +23,6 @@ class ConfBuilder {
     this.config = {
       nodes: jsonMsg?.nodes || {},
       paths: jsonMsg?.paths || [],
-      http: jsonMsg?.http,
-      logging: jsonMsg?.logging,
-      stats: jsonMsg?.stats,
-      affinity: jsonMsg?.affinity,
-      priority: jsonMsg?.priority,
-      hugepages: jsonMsg?.hugepages,
     };
 
     /**
@@ -208,8 +202,17 @@ class ConfBuilder {
       return value;
     };
 
-    // TODO (?) reset config to empty (original state after constructor)
-    return JSON.stringify(this.config, replacer, 2);
+    const json = JSON.stringify(this.config, replacer, 2);
+
+    // reset config to empty (original state after constructor)
+    this.config = {
+      nodes: {},
+      paths: [],
+    };
+    this._pending = [];
+    this._nodeLookup.clear();
+
+    return json;
   }
 
   /**

@@ -35,6 +35,11 @@ class BidirecitonalMap {
   revGet(key) {
     return this.reverseMap.get(key);
   }
+
+  clear() {
+    this.map.clear();
+    this.reverseMap.clear();
+  }
 }
 
 module.exports = {
