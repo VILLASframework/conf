@@ -1,7 +1,7 @@
 FROM nodered/node-red:5.0.7
 
 WORKDIR /data
-COPY package.json /data
+COPY villas-conf-node/package.json /data
 
 RUN npm install --no-update-notifier --no-fund --only=production
 
