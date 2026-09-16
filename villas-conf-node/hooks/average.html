@@ -3,48 +3,45 @@
         category: 'Hooks',
         color: '#25C2A0',
         defaults: {
-            name: { value: "" },
+            hooktype: { value: "average", required: true },
             offset: { value: 0, required: true },
-            signals: { value: [], required: true, validate: function(v) { return Array.isArray(v) && v.length > 0; } },
-            enabled: { value: true },
-            priority: { value: 99 }
+            priority: { value: "", required: false }
         },
         inputs: 1,
         outputs: 1,
-        icon: "font-awesome/fa-calculator",
+        icon: "average.svg",
         label: function() {
-            return this.name || "average";
+            return "average";
         }
     });
 </script>
 
 <script type="text/html" data-template-name="average">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+      <label for="node-input-villas-type"><i class="fa fa-tag"></i> Type</label>
+      <input type="text" id="node-input-villas-type" placeholder="Type" value="average" readonly/>
     </div>
     <div class="form-row">
         <label for="node-input-offset"><i class="fa fa-sort-numeric-asc"></i> Offset</label>
         <input type="number" id="node-input-offset" placeholder="Offset">
     </div>
     <div class="form-row">
-        <label for="node-input-signals"><i class="fa fa-random"></i> Signals (JSON array)</label>
-        <input type="text" id="node-input-signals" placeholder='["busA.V", "busB.V", "busC.V"]'>
-    </div>
-    <div class="form-row">
-        <label for="node-input-enabled"><i class="fa fa-toggle-on"></i> Enabled</label>
-        <input type="checkbox" id="node-input-enabled" checked>
-    </div>
-    <div class="form-row">
-        <label for="node-input-priority"><i class="fa fa-bolt"></i> Priority</label>
-        <input type="number" id="node-input-priority" placeholder="99">
+        <label for="node-input-villas-priority"><i class="fa fa-sort"></i> Priority</label>
+        <input type="number" name="node-input-priority" id="node-input-priority" placeholder="99" value="99">
     </div>
 </script>
 
 <script type="text/html" data-help-name="average">
-    <p>This node calculates the average (arithmetic mean) of multiple signals and outputs the result as a new value.</p>
-    <p><b>Offset:</b> Where to insert the new averaged value.</p>
-    <p><b>Signals:</b> A JSON array of signal names (e.g., ["busA.V", "busB.V"]).</p>
-    <p><b>Enabled:</b> Whether the hook is active.</p>
-    <p><b>Priority:</b> Order of execution relative to other hooks.</p>
+    <p>This hook calculates the average (arithmetic mean) of multiple signals and outputs the result as a new value.</p>
+    <p>
+        <b>Offset:</b> The signal offset at which the average signal should be inserted.<br>
+        Examples:<br>
+        <b>0</b> inserts the averaged signal before all other signals in the sample<br>
+        <b>1</b> inserts the averaged signal after the first signal.</p>
+        <b>Priority:</b> The hook priority determines execution order.
+        Hooks with a lower priority are executed before ones with a higher priority.<br>
+
+        If no priority is configured, hooks are executed in the order in which they are listed
+        in the configuration file.<br>
+    </p>
 </script>
