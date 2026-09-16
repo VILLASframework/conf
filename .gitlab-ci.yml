@@ -13,7 +13,7 @@ build:
   script:
   - docker build --file ${DOCKER_FILE} --tag ${DOCKER_IMAGE} .
   tags:
-  - docker
+  - docker-image-builder
 
 
 deploy:
@@ -25,6 +25,6 @@ deploy:
   script:
   - docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
   tags:
-  - docker
+  - docker-image-builder
   dependencies:
   - build
