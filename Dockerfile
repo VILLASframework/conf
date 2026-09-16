@@ -1,15 +1,17 @@
-# Basis-Image
-FROM nodered/node-red:3.1.0
+FROM nodered/node-red:5.0.7
+
+WORKDIR /data
+COPY package.json /data
+
+RUN npm install --no-update-notifier --no-fund --only=production
+
+WORKDIR /usr/src/node-red
+COPY villas-conf-node/ ./
 
 
-COPY villas-conf-node /data/villas-conf-node
 
-RUN npm install /data/villas-conf-node || echo "WARN: Villas node not found. Please mount correctly."
+#RUN npm install /data/villas-conf-node || echo "WARN: Villas node not found. Please mount correctly."
 
-#WIP for viilas.conf
+COPY settings.js /data/settings.js
 
-#COPY settings.js /data/settings.js
-
-
-# Standard-Port
 EXPOSE 1880
