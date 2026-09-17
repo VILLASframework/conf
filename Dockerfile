@@ -11,8 +11,8 @@ COPY villas-conf-node /villas-conf-node
 
 RUN npm install /villas-conf-node
 
-WORKDIR /data
-COPY --chown=node-red:node-red packaging/deploy/entrypoint.sh /data/entrypoint.sh
+#WORKDIR /data
+COPY --chown=node-red:node-red packaging/deploy/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
 EXPOSE 1880
