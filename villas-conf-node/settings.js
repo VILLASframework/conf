@@ -388,12 +388,12 @@ httpStatic: "./public",
         //tours: false,
         header: {
             title: "VILLASconf",
-            image: "/villas-conf-node/assets/villas_node.svg"
+            image: "/data/villas-conf-node/assets/villas_node.svg"
         },
         page: {
             title: "VILLASconf",
-            favicon: "/villas-conf-node/assets/villas_node.svg",
-            scripts: ["/editor/export.js"]
+            favicon: "/data/villas-conf-node/assets/villas_node.svg",
+//            scripts: ["/editor/export.js"]
         },
         palette: {
             /** The following property can be used to order the categories in the editor
