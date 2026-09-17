@@ -1,6 +1,6 @@
 FROM nodered/node-red:5.0.7
 
-COPY --chown=node-red:node-red villas-conf-node/settings.js /data/settings.js
+#COPY --chown=node-red:node-red villas-conf-node/settings.js /data/settings.js
 
 #COPY --chown=node-red:node-red villas-conf-node /tmp/villas-conf-node
 
