@@ -1,9 +1,9 @@
 FROM nodered/node-red:5.0.7
 
-COPY villas-conf-node/ /data/villas-conf-node
+COPY --chown=node-red:node-red villas-conf-node /data/villas-conf-node
 
 WORKDIR /data/villas-conf-node
-RUN npm install --no-update-notifier --no-fund --only=production
+RUN npm install --no-update-notifier --no-fund --omit=dev
 
 WORKDIR /usr/src/node-red
 
