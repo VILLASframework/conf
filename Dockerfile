@@ -9,4 +9,5 @@ RUN npm install --no-update-notifier --no-fund --omit=dev /tmp/villas-conf-node
 
 WORKDIR /data
 
+CMD ["npm", "start"]
 EXPOSE 1880
