@@ -10,7 +10,5 @@ RUN npm install --no-update-notifier --no-fund --omit=dev /tmp/villas-conf-node
 WORKDIR /data
 COPY packaging/deploy/entrypoint.sh .
 
-RUN chmod +x entrypoint.sh
-
 ENTRYPOINT ["./entrypoint.sh"]
 EXPOSE 1880
