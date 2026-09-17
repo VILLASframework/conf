@@ -7,6 +7,6 @@ RUN npm install --no-update-notifier --no-fund --omit=dev
 
 WORKDIR /usr/src/node-red
 
-COPY /data/villas-conf-node/settings.js /data/settings.js
+COPY ./settings.js /data/settings.js
 
 EXPOSE 1880
