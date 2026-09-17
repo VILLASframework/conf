@@ -7,7 +7,9 @@ COPY --chown=node-red:node-red villas-conf-node /tmp/villas-conf-node
 # install villas-conf-node as npm package
 RUN npm install --no-update-notifier --no-fund --omit=dev /tmp/villas-conf-node
 
+COPY packaging/deploy/entrypoint.sh .
+
 WORKDIR /data
 
-CMD ["npm", "start"]
+ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 1880

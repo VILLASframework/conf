@@ -1,5 +1,5 @@
 #!/bin/sh
 
-npm i /villas-conf-node
+npm i /data
 
 node node_modules/node-red/red.js --userDir /data $FLOWS
