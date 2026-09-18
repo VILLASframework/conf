@@ -447,6 +447,10 @@ httpStatic: "./public",
                 enabled: true
             }
         },
+        telemetry: {
+            enabled: false,
+            updateNotification: false
+        }
 
     },
 
