@@ -1,9 +1,9 @@
 <script type="text/javascript">
-RED.nodes.registerType("signal-sine", {
+RED.nodes.registerType("signal-counter", {
     category: "Signals",
     color: "#E0E69A",
     defaults: {
-        name: { value: "sine" },
+        name: { value: "counter" },
         unit: { value: "" },
         dataType: { value: "float", required: true },
         initialValue: { value: 0, required: true },
@@ -14,32 +14,18 @@ RED.nodes.registerType("signal-sine", {
     },
     inputs: 1,
     outputs: 1,
-    icon: "sine-wave.svg",
-    paletteLabel: "sine",
+    icon: "counter.svg",
+    paletteLabel: "counter",
     label: function () {
-        return this.name || "Sine";
+        return this.name || "Counter";
     }
 });
 </script>
 
-<script type="text/html" data-template-name="signal-sine">
+<script type="text/html" data-template-name="signal-counter">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Sine">
-    </div>
-    <div class="form-row">
-        <label for="node-input-amplitude"><i class="fa fa-arrows-v"></i> Amplitude</label>
-        <input type="number" id="node-input-amplitude" step="any">
-    </div>
-    <div class="form-row">
-        <label for="node-input-frequency"><i class="fa fa-repeat"></i> Frequency</label>
-        <input type="number" id="node-input-frequency" min="0" step="any">
-        <span>Hz</span>
-    </div>
-    <div class="form-row">
-        <label for="node-input-phase"><i class="fa fa-rotate-right"></i> Phase</label>
-        <input type="number" id="node-input-phase" step="any">
-        <span>deg</span>
+        <input type="text" id="node-input-name" placeholder="Counter">
     </div>
     <hr>
     <div class="form-row">
@@ -53,8 +39,8 @@ RED.nodes.registerType("signal-sine", {
     <div class="form-row">
         <label for="node-input-dataType"><i class="fa fa-code"></i> Data type</label>
         <select id="node-input-dataType">
-            <option value="float">Float</option>
             <option value="integer">Integer</option>
+            <option value="float">Float</option>
             <option value="boolean">Boolean</option>
             <option value="string">String</option>
         </select>
@@ -65,6 +51,6 @@ RED.nodes.registerType("signal-sine", {
     </div>
 </script>
 
-<script type="text/html" data-help-name="signal-sine">
-    <p>A sine wave signal.</p>
+<script type="text/html" data-help-name="signal-counter">
+    <p>An increasing integer counter.</p>
 </script>

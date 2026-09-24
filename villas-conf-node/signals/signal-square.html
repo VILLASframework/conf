@@ -1,28 +1,27 @@
 <script type="text/javascript">
-RED.nodes.registerType("signal-sine", {
+RED.nodes.registerType("signal-square", {
     category: "Signals",
     color: "#E0E69A",
     defaults: {
-        name: { value: "sine" },
+        name: { value: "square" },
         unit: { value: "" },
         dataType: { value: "float", required: true },
         initialValue: { value: 0, required: true },
         offset: { value: 0, required: false, validate: RED.validators.number() },
         amplitude: { value: 1, required: false, validate: RED.validators.number() },
         frequency: { value: 1, required: false, validate: RED.validators.number() },
-        phase: { value: 0, required: false, validate: RED.validators.number() }
     },
     inputs: 1,
     outputs: 1,
-    icon: "sine-wave.svg",
-    paletteLabel: "sine",
+    icon: "square-wave.svg",
+    paletteLabel: "square",
     label: function () {
-        return this.name || "Sine";
+        return this.name || "Square";
     }
 });
 </script>
 
-<script type="text/html" data-template-name="signal-sine">
+<script type="text/html" data-template-name="signal-square">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Sine">
@@ -35,11 +34,6 @@ RED.nodes.registerType("signal-sine", {
         <label for="node-input-frequency"><i class="fa fa-repeat"></i> Frequency</label>
         <input type="number" id="node-input-frequency" min="0" step="any">
         <span>Hz</span>
-    </div>
-    <div class="form-row">
-        <label for="node-input-phase"><i class="fa fa-rotate-right"></i> Phase</label>
-        <input type="number" id="node-input-phase" step="any">
-        <span>deg</span>
     </div>
     <hr>
     <div class="form-row">
@@ -65,6 +59,6 @@ RED.nodes.registerType("signal-sine", {
     </div>
 </script>
 
-<script type="text/html" data-help-name="signal-sine">
-    <p>A sine wave signal.</p>
+<script type="text/html" data-help-name="signal-square">
+    <p>A square/rectangle wave signal.</p>
 </script>
