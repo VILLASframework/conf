@@ -9,6 +9,6 @@ services:
       - 1880:1880
     volumes:
       - ../../containerData:/data
-      - ../../villas-conf-node:/data/villas-conf-node
+      - ../../villas-conf-node:/villas-conf-node
       - ./entrypoint.sh:/entrypoint.sh
       - /home/iko/Downloads/villasconfig.json:/tmp/villasconfig.json
