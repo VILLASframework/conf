@@ -21,6 +21,7 @@ class ConfBuilder {
      * @public
      */
     this.config = {
+      http: jsonMsg?.http,
       nodes: jsonMsg?.nodes || {},
       paths: jsonMsg?.paths || [],
     };
@@ -212,6 +213,7 @@ class ConfBuilder {
     })
 
     this.config = {
+      http: this.config.http,
       nodes: {},
       paths: [],
     };

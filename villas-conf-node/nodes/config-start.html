@@ -7,12 +7,25 @@
   RED.nodes.registerType("config-start", {
     category: "Conf",
     color: "#407FB7",
-    defaults: {},
+    defaults: {
+      httpEnabled: { value: false },
+      httpPort: { value: 80, validate: RED.validators.number() },
+      ssl_cert: { value: "" },
+      ssl_private_key: { value: "" },
+    },
     inputs: 0,
     outputs: 1,
     icon: "font-awesome/fa-gears",
     label: function () {
       return this.name || "config-start";
+    },
+    oneditprepare: function () {
+      function updateHttpVisibility() {
+        $("#config-start-http-options").toggle($("#node-input-httpEnabled").is(":checked"));
+      }
+
+      $("#node-input-httpEnabled").on("change", updateHttpVisibility);
+      updateHttpVisibility();
     },
     button: {
       onclick: function () {
@@ -68,4 +81,25 @@
       },
     },
   });
+</script>
+
+<script type="text/html" data-template-name="config-start">
+  <div class="form-row">
+    <label for="node-input-httpEnabled">HTTP</label>
+    <input type="checkbox" id="node-input-httpEnabled" style="width:auto;">
+  </div>
+  <div id="config-start-http-options">
+    <div class="form-row">
+      <label for="node-input-httpPort">Port</label>
+      <input type="number" id="node-input-httpPort" min="1" max="65535" placeholder="80">
+    </div>
+    <div class="form-row">
+      <label for="node-input-ssl_cert">SSL certificate</label>
+      <input type="text" id="node-input-ssl_cert" placeholder="/path/to/certificate.pem">
+    </div>
+    <div class="form-row">
+      <label for="node-input-ssl_private_key">SSL private key</label>
+      <input type="text" id="node-input-ssl_private_key" placeholder="/path/to/private-key.pem">
+    </div>
+  </div>
 </script>

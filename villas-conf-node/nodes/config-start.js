@@ -7,7 +7,14 @@ module.exports = function (RED) {
 
     // init the shared ConfigurationBuilder
     // from here on out we only use the path ordering and configurations from nodes not the messaging system
-    this.context().flow.set("builder", new ConfBuilder());
+    const http = config.httpEnabled
+      ? {
+          port: config.httpPort,
+          ssl_cert: config.ssl_cert,
+          ssl_private_key: config.ssl_private_key,
+        }
+      : undefined;
+    this.context().flow.set("builder", new ConfBuilder({ http }));
 
     node.on("input", function (_msg, _send, _done) {
       const newMSG = {
