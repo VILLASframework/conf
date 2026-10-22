@@ -9,9 +9,9 @@ module.exports = function (RED) {
     // from here on out we only use the path ordering and configurations from nodes not the messaging system
     const http = config.httpEnabled
       ? {
-          port: config.httpPort,
-          ssl_cert: config.ssl_cert,
-          ssl_private_key: config.ssl_private_key,
+          port: parseInt(config.httpPort),
+          ...(config.ssl_cert != null && { ssl_cert: config.ssl_cert }),
+          ...(config.ssl_private_key != null && { ssl_private_key: config.ssl_private_key }),
         }
       : undefined;
     this.context().flow.set("builder", new ConfBuilder({ http }));

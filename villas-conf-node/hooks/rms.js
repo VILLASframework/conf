@@ -8,7 +8,7 @@ module.exports = function(RED) {
         const rmshookConfig = {
             type: "rms",
             signals: [],
-            ...(config.windowsize != null && { window_size: Number(config.windowsize) }),
+            window_size: Number(config.windowsize ?? 0),
             ...(config.priority != null && { priority: Number(config.priority) }),
         }
 

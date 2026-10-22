@@ -4,7 +4,10 @@
         category: "Nodes",
         color: "#8EBAE5",
         defaults: {
-            name: {value: "Signal Generator (v2)"},
+            name: {
+                value: "signalgenerator",
+                validate: function (value) { return !/\s/.test(value); }
+            },
             realtime: {value: true},
             rate: {value: 0, required: false, validate: RED.validators.number()},
         },
@@ -15,9 +18,13 @@
         paletteLabel: "signal generator",
 
         label: function () {
-            return this.name || "Signal Generator";
+            return this.name;
         },
         oneditprepare: function() {
+            function updateNameWarning() {
+                $("#signalgenerator-name-warning").toggle(/\s/.test($("#node-input-name").val()));
+            }
+
             function updateRateVisibility() {
                 if ($("#node-input-realtime").is(":checked")) {
                     $("#signalgenerator-rate-row").show();
@@ -27,7 +34,9 @@
             }
 
             $("#node-input-realtime").on("change", updateRateVisibility);
+            $("#node-input-name").on("input change", updateNameWarning);
 
+            updateNameWarning();
             updateRateVisibility();
         }
     });
@@ -37,7 +46,10 @@
 <script type="text/html" data-template-name="signal-generator">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Signal Generator (v2)">
+        <input type="text" id="node-input-name" placeholder="SignalGenerator_v2">
+    </div>
+    <div id="signalgenerator-name-warning" class="form-tips" role="alert" style="color: #b00020; font-weight: bold; display: none;">
+        Warning: The name must not contain whitespace characters.
     </div>
 
     <div class="form-row">

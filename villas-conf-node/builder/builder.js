@@ -150,7 +150,7 @@ class ConfBuilder {
   }
 
 
-    addHook2(redId, config, msg, wires) {
+  addHook2(redId, config, msg, wires) {
     // kept in, TODO: consider whether this logic is still/actually true
     if (wires.length > 1) {
       return new UndefinedHookPathError(redId, config.type | "empty");
@@ -197,7 +197,7 @@ class ConfBuilder {
 
     const replacer = (_, value) => {
       // Filtering out properties
-      if (!value) {
+      if (!value && value !== 0) {
         return undefined;
       }
       return value;
