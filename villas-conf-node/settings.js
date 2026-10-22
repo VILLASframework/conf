@@ -393,6 +393,7 @@ httpStatic: "./public",
         page: {
             title: "VILLASconf",
             favicon: "/villas-conf-node/assets/villas_node.svg",
+            css: "/villas-conf-node/assets/editor.css",
 //            scripts: ["/editor/export.js"]
         },
         palette: {
@@ -450,6 +451,11 @@ httpStatic: "./public",
         telemetry: {
             enabled: false,
             updateNotification: false
+        },
+        deployButton: {
+            type: "simple",
+            label: "Save",
+            icon: "/villas-conf-node/assets/villas_node.svg"
         }
 
     },

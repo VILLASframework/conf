@@ -1,0 +1,20 @@
+/* custom colors for enabled [Deploy/Save] button */
+#red-ui-header .red-ui-deploy-button:not(:disabled):not(.disabled) {
+    background-color: #8EBAE5 !important;
+    border-color: #407FB7 !important;
+    color: white !important;
+}
+
+/* make inject node more visible*/
+.red-ui-flow-node-button-background {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(1.5);
+    fill: rgb(238, 236, 236) !important;
+}
+.red-ui-flow-node-button-button {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(1.5);
+    fill: #37A1FF !important;
+}
