@@ -1,0 +1,30 @@
+{
+  "nodes": {
+    "sockettest2": {
+      "type": "socket",
+      "layer": "udp",
+
+      "in": {
+        "address": "*:12000"
+      },
+      "out": {
+        "address": "127.0.0.1:12002"
+      }
+    },
+    "villas-file": {
+      "uri": "/tmp/logs/villasnode.log",
+      "type": "file"
+    }
+  },
+  "paths": [
+    {
+      "in": "sockettest2",
+      "hooks": [
+        {
+          "type": "print"
+        }
+      ],
+      "out": "villas-file"
+    }
+  ]
+}

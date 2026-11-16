@@ -1,0 +1,43 @@
+{
+  "nodes": {
+    "signalgenerator": {
+      "realtime": true,
+      "rate": 2,
+      "type": "signal.v2",
+      "in": {
+        "signals": [
+          {
+            "signal": "random",
+            "name": "Random",
+            "stddev": 0.2,
+            "initialValue": 0,
+            "dataType": "float"
+          }
+        ]
+      }
+    },
+    "sockettest1": {
+      "type": "socket",
+      "layer": "udp",
+
+      "in": {
+        "address": "*:12001"
+      },
+      "out": {
+        "address": "172.20.0.10:12000"
+      }
+    }
+  },
+  "paths": [
+    {
+      "in": "signalgenerator",
+      "hooks": [
+        {
+          "type": "print",
+          "signals": ["random"]
+        }
+      ],
+      "out": "sockettest1"
+    }
+  ]
+}
